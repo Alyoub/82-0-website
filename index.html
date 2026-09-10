@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="82-0 Basketball Draft — build your dream lineup and chase a perfect season.">
+  <title>82-0 | Basketball Draft</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090d;
+      --card: rgba(255,255,255,.07);
+      --text: #f7f8fa;
+      --muted: #aab1bd;
+      --accent: #ff7a18;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,122,24,.25), transparent 35%),
+        radial-gradient(circle at 85% 80%, rgba(52,96,255,.18), transparent 38%),
+        var(--bg);
+    }
+
+    main {
+      width: min(760px, 100%);
+      padding: clamp(32px, 7vw, 72px);
+      text-align: center;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: 0 24px 80px rgba(0,0,0,.45);
+      backdrop-filter: blur(18px);
+    }
+
+    .ball {
+      display: grid;
+      place-items: center;
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      font-size: 42px;
+      background: linear-gradient(145deg, #ff9c35, #eb5b08);
+      box-shadow: 0 12px 36px rgba(255,122,24,.35);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(56px, 13vw, 104px);
+      line-height: .95;
+      letter-spacing: -.07em;
+    }
+
+    h1 span { color: var(--accent); }
+
+    p {
+      max-width: 520px;
+      margin: 24px auto 0;
+      color: var(--muted);
+      font-size: clamp(17px, 3vw, 21px);
+      line-height: 1.6;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 32px;
+      padding: 12px 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      color: #dfe3ea;
+      background: rgba(0,0,0,.22);
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #41d67d;
+      box-shadow: 0 0 14px #41d67d;
+    }
+
+    footer {
+      margin-top: 36px;
+      color: #747d8b;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="ball" aria-hidden="true">🏀</div>
+    <h1>82<span>-0</span></h1>
+    <p>Build your dream basketball lineup, simulate the season, and see if your squad can finish a perfect 82-0.</p>
+    <div class="status"><span class="dot"></span> Website connected successfully</div>
+    <footer>© 2026 82-0 Studio</footer>
+  </main>
+</body>
+</html>
