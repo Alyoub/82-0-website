@@ -1,110 +1,852 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="82-0 Basketball Draft — build your dream lineup and chase a perfect season.">
-  <title>82-0 | Basketball Draft</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #07090d;
-      --card: rgba(255,255,255,.07);
-      --text: #f7f8fa;
-      --muted: #aab1bd;
-      --accent: #ff7a18;
-    }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>82-0 Basketball Draft Game | Build Your Perfect Team</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Draft legendary basketball players across eras, build a powerhouse starting five, and simulate a full 82-game season. Can your squad achieve an undefeated 82-0 record?">
+  <meta name="keywords" content="82-0 Basketball Draft, basketball draft game, build a basketball team, basketball lineup simulator, basketball season simulation, basketball strategy game, 82-0 game">
+  <meta name="author" content="Mouad Bousbaa">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://82-0.studio/">
 
-    * { box-sizing: border-box; }
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://82-0.studio/">
+  <meta property="og:title" content="82-0 Basketball Draft Game | Build Your Perfect Team">
+  <meta property="og:description" content="Draft legendary players across historical eras, optimize lineup chemistry, and simulate an entire 82-game regular season. Will your team finish 82-0?">
+  <meta property="og:image" content="https://82-0.studio/assets/images/icon-512.webp">
+  <meta property="og:site_name" content="82-0: Basketball Draft">
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 20% 10%, rgba(255,122,24,.25), transparent 35%),
-        radial-gradient(circle at 85% 80%, rgba(52,96,255,.18), transparent 38%),
-        var(--bg);
-    }
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://82-0.studio/">
+  <meta name="twitter:title" content="82-0 Basketball Draft Game | Build Your Perfect Team">
+  <meta name="twitter:description" content="Draft legendary players, balance offense, defense and chemistry, and chase the undefeated 82-0 season record on iOS.">
+  <meta name="twitter:image" content="https://82-0.studio/assets/images/icon-512.webp">
 
-    main {
-      width: min(760px, 100%);
-      padding: clamp(32px, 7vw, 72px);
-      text-align: center;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 28px;
-      background: var(--card);
-      box-shadow: 0 24px 80px rgba(0,0,0,.45);
-      backdrop-filter: blur(18px);
-    }
+  <!-- Favicon & Touch Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+  <meta name="theme-color" content="#070a0f">
 
-    .ball {
-      display: grid;
-      place-items: center;
-      width: 82px;
-      height: 82px;
-      margin: 0 auto 24px;
-      border-radius: 50%;
-      font-size: 42px;
-      background: linear-gradient(145deg, #ff9c35, #eb5b08);
-      box-shadow: 0 12px 36px rgba(255,122,24,.35);
-    }
+  <!-- Preconnect & Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 
-    h1 {
-      margin: 0;
-      font-size: clamp(56px, 13vw, 104px);
-      line-height: .95;
-      letter-spacing: -.07em;
-    }
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="assets/css/styles.css">
 
-    h1 span { color: var(--accent); }
-
-    p {
-      max-width: 520px;
-      margin: 24px auto 0;
-      color: var(--muted);
-      font-size: clamp(17px, 3vw, 21px);
-      line-height: 1.6;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      margin-top: 32px;
-      padding: 12px 18px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
-      color: #dfe3ea;
-      background: rgba(0,0,0,.22);
-    }
-
-    .dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #41d67d;
-      box-shadow: 0 0 14px #41d67d;
-    }
-
-    footer {
-      margin-top: 36px;
-      color: #747d8b;
-      font-size: 14px;
-    }
-  </style>
+  <!-- JSON-LD Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "82-0: Basketball Draft",
+    "operatingSystem": "iOS 15.6 or later",
+    "applicationCategory": "GameApplication",
+    "applicationSubCategory": "SportsStrategyGame",
+    "genre": ["Sports", "Games", "Strategy"],
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.1",
+      "reviewCount": "54",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Mouad Bousbaa"
+    },
+    "downloadUrl": "https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298",
+    "image": "https://82-0.studio/assets/images/icon-512.webp",
+    "description": "82-0 is the viral basketball roster-building and season-simulation game. Spin random teams and historical eras, draft five complementary players, optimize team chemistry, and simulate an 82-game regular season."
+  }
+  </script>
 </head>
 <body>
-  <main>
-    <div class="ball" aria-hidden="true">🏀</div>
-    <h1>82<span>-0</span></h1>
-    <p>Build your dream basketball lineup, simulate the season, and see if your squad can finish a perfect 82-0.</p>
-    <div class="status"><span class="dot"></span> Website connected successfully</div>
-    <footer>© 2026 82-0 Studio</footer>
+
+  <!-- Ambient Stadium & Court Atmosphere -->
+  <div class="ambient-bg" aria-hidden="true"></div>
+  <div class="court-lines-pattern" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="https://82-0.studio/" class="brand-group" aria-label="82-0 Basketball Draft Home">
+        <img src="assets/images/icon-512.webp" alt="82-0 Game Icon" class="brand-logo-img" width="42" height="42">
+        <div class="brand-text">
+          <span class="brand-name">82-0</span>
+          <span class="brand-tag">Basketball Draft</span>
+        </div>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#screenshots" class="nav-link">Screenshots</a>
+        <a href="#strategy" class="nav-link">Strategy</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="support/" class="nav-link">Support</a>
+      </nav>
+
+      <div class="header-cta-group">
+        <a href="https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298" target="_blank" rel="noopener noreferrer" class="btn btn-primary header-btn" aria-label="Get 82-0 on the Apple App Store">
+          <span>Get the App</span>
+        </a>
+
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div id="mobile-nav" class="mobile-nav-drawer" aria-hidden="true">
+    <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
+    <a href="#features" class="mobile-nav-link">Features</a>
+    <a href="#screenshots" class="mobile-nav-link">Screenshots</a>
+    <a href="#strategy" class="mobile-nav-link">Strategy</a>
+    <a href="#faq" class="mobile-nav-link">FAQ</a>
+    <a href="support/" class="mobile-nav-link">Support</a>
+    <a href="privacy/" class="mobile-nav-link">Privacy Policy</a>
+    <a href="https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="margin-top: 12px;">
+      <span>Download on App Store</span>
+    </a>
+  </div>
+
+  <main id="main-content">
+    <!-- Hero Section -->
+    <section class="hero-section" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="eyebrow">
+            <span class="eyebrow-dot" aria-hidden="true"></span>
+            BUILD. DRAFT. SIMULATE.
+          </div>
+          
+          <h1 id="hero-title" class="hero-headline">
+            Can Your Team Finish <span class="text-gradient-orange">82-0?</span>
+          </h1>
+
+          <p class="hero-desc">
+            Spin randomized basketball franchises and historical decades, draft legendary players, and engineer a balanced five-player lineup. Put your basketball strategy to the test across an authentic 82-game regular season simulation.
+          </p>
+
+          <div class="hero-cta-row">
+            <a href="https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298" target="_blank" rel="noopener noreferrer" class="btn-badge" aria-label="Download 82-0 Basketball Draft on the Apple App Store">
+              <svg width="28" height="28" viewBox="0 0 170 170" fill="currentColor" aria-hidden="true">
+                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.67-7.81-11.96-14.34-6.19-9.35-11.08-19.98-14.67-31.89-3.59-11.91-5.39-23.36-5.39-34.34 0-14.37 3.63-26.32 10.89-35.85 7.26-9.53 16.29-14.4 27.09-14.61 5.35 0 11.22 1.45 17.62 4.35 6.4 2.91 10.42 4.41 12.06 4.51 1.91-.1 6.16-1.63 12.75-4.6 6.59-2.97 12.21-4.35 16.86-4.14 12.56.74 22.47 5.43 29.74 14.07-10.97 6.64-16.34 15.75-16.12 27.34.22 9.07 3.73 16.73 10.53 22.98 6.8 6.25 14.72 9.77 23.76 10.56-2.12 6.53-4.68 13.06-7.68 19.59zm-38.35-112.59c-.21 2.33-.85 4.67-1.91 7.02-1.06 2.35-2.61 4.74-4.65 7.17-2.76 3.19-5.94 5.79-9.54 7.8-3.6 2.01-6.94 3.18-10.02 3.51-.43-2.12-.48-4.3-.16-6.53.32-2.23 1.09-4.57 2.3-7.02 2.65-5.32 6.22-9.45 10.7-12.39 4.48-2.94 8.9-4.78 13.28-5.51z"/>
+              </svg>
+              <div class="badge-text-group">
+                <span class="badge-sub">Download on the</span>
+                <span class="badge-main">App Store</span>
+              </div>
+            </a>
+
+            <a href="#how-it-works" class="btn btn-secondary">
+              <span>See How It Works</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+            </a>
+          </div>
+
+          <div class="trust-badges-bar">
+            <div class="trust-item">
+              <svg class="trust-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span>Strategy-Driven Drafting</span>
+            </div>
+            <div class="trust-item">
+              <svg class="trust-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.05.5-9 4.77-9 9.95 0 5.52 4.48 10 10 10 2.4 0 4.6-.85 6.32-2.28l-2.14-1.79C14.88 18.61 13.5 19 12 19z"/>
+              </svg>
+              <span>Fast 82-Game Simulation</span>
+            </div>
+            <div class="trust-item">
+              <svg class="trust-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M16 11V3H8v6H2v12h20V11h-6zm-6-6h4v14h-4V5zm-6 8h4v6H4v-6zm16 6h-4v-8h4v8z"/>
+              </svg>
+              <span>Competitive Leaderboards</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Premium iPhone Device Showcase Composition -->
+        <div class="hero-device-wrapper">
+          <div class="hero-glow-halo" aria-hidden="true"></div>
+          
+          <!-- Depth Secondary Mockup -->
+          <div class="hero-device-depth" aria-hidden="true">
+            <div class="device-iphone">
+              <div class="device-screen-container">
+                <img src="assets/images/screens/screen-lineup-court.webp" alt="" class="device-screen-img" width="335" height="760">
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Focal Mockup (Home Screen) -->
+          <div class="hero-device-main">
+            <div class="device-iphone">
+              <div class="device-notch-island" aria-hidden="true">
+                <div class="camera-lens"></div>
+              </div>
+              <div class="device-screen-container">
+                <img src="assets/images/screens/screen-home.webp" alt="82-0 Basketball Draft Home Screen showing Start Your Dynasty button and records" class="device-screen-img" width="335" height="760">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section (4 Steps) -->
+    <section id="how-it-works" class="how-it-works-section" aria-labelledby="how-it-works-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">FOUR-STEP GAMEPLAY LOOP</span>
+          <h2 id="how-it-works-title">How 82-0 Works</h2>
+          <p>Every draft is a fresh test of basketball acumen, era knowledge, and strategic synergy. Follow the four-step loop from the initial spin to regular season glory.</p>
+        </div>
+
+        <div class="steps-container">
+          <!-- Step 1: Draw Team & Era -->
+          <article class="step-row" aria-labelledby="step1-title">
+            <div class="step-info">
+              <div class="step-badge" aria-hidden="true">01</div>
+              <h3 id="step1-title">Draw a Team & Historical Era</h3>
+              <p>
+                Each draft pick begins by spinning randomized basketball franchises and decade wheels. Will you land the classic 1980s powerhouse, early 2000s isolation masters, or modern 2020s perimeter snipers?
+              </p>
+              <ul class="step-features-list">
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Dynamic team wheel featuring iconic basketball franchises</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Historical eras spanning from the 1960s to the 2020s</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Contextual draft pools matching the selected era and squad</span>
+                </li>
+              </ul>
+            </div>
+            <div class="step-visual">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-spin-team.webp" alt="Spin for your Team selection wheel screen" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Step 2: Choose Your Player -->
+          <article class="step-row reversed" aria-labelledby="step2-title">
+            <div class="step-info">
+              <div class="step-badge" aria-hidden="true">02</div>
+              <h3 id="step2-title">Choose Your Player</h3>
+              <p>
+                Review eligible basketball legends and modern stars for the targeted positional round (PG, SG, SF, PF, C). Evaluate overall ratings, offense, defense, playmaking, and rebounding attributes before locking in your pick.
+              </p>
+              <ul class="step-features-list">
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Detailed multi-attribute scouting (Scoring, Defense, Playmaking, Rebound)</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Player comparison mode to weigh complementary roster fit</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Special Hoop IQ mode hides overall ratings for true basketball historians</span>
+                </li>
+              </ul>
+            </div>
+            <div class="step-visual">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-draft-player.webp" alt="Drafting Point Guard player card showing ratings for Magic Johnson" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Step 3: Build Your Five -->
+          <article class="step-row" aria-labelledby="step3-title">
+            <div class="step-info">
+              <div class="step-badge" aria-hidden="true">03</div>
+              <h3 id="step3-title">Build Your Five & Maximize Chemistry</h3>
+              <p>
+                Complete your starting five across five rounds. The proprietary roster engine calculates your team rating across offensive firepower, defensive discipline, glass presence, and lineup chemistry.
+              </p>
+              <ul class="step-features-list">
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Positional balance bonus rewarding a true starting five</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Elite synergy perks for playmakers, lock-down defenders, and shooters</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Interactive court view to review matchups and team strengths</span>
+                </li>
+              </ul>
+            </div>
+            <div class="step-visual">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-lineup-court.webp" alt="Completed 5-player basketball lineup with chemistry percentage on full court" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Step 4: Simulate the Season -->
+          <article class="step-row reversed" aria-labelledby="step4-title">
+            <div class="step-info">
+              <div class="step-badge" aria-hidden="true">04</div>
+              <h3 id="step4-title">Simulate the Full 82-Game Season</h3>
+              <p>
+                Hit simulate and watch the campaign unfold game by game. Track box score highlights, clutch buzzer beaters, win streaks, and final record outcomes from Contender status to the coveted Legendary 82-0 run.
+              </p>
+              <ul class="step-features-list">
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Dynamic win probability calculations with real game-to-game variance</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Adjustable simulation speed: Slower, Normal, or Instant</span>
+                </li>
+                <li>
+                  <svg class="step-check-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  <span>Combined Game Center scoring: (Wins × 100) + (Chemistry × 10)</span>
+                </li>
+              </ul>
+            </div>
+            <div class="step-visual">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-sim-season.webp" alt="82-game regular season simulation in progress showing wins and game logs" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section (6 Cards) -->
+    <section id="features" class="features-section" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">BUILT FOR BASKETBALL MINDS</span>
+          <h2 id="features-title">Engineered For True Hoops Fans</h2>
+          <p>Every feature in 82-0 is designed to celebrate basketball history, reward smart roster construction, and deliver rapid, high-stakes replayability.</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Card 1 -->
+          <div class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M4.93 4.93l14.14 14.14"></path>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
+            <h3>Random Team & Era Drafts</h3>
+            <p>Every draft round introduces new combinations. Adapt your draft board on the fly as random franchise and decade combinations challenge your basketball knowledge.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3>Strategic Five-Player Lineups</h3>
+            <p>Draft one player for Point Guard, Shooting Guard, Small Forward, Power Forward, and Center. Balanced role allocation prevents redundancy and optimizes production.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </div>
+            <h3>Full 82-Game Simulation</h3>
+            <p>Simulate an authentic regular-season calendar against era teams. Experience realistic clutch finishes, offensive explosions, and defensive shutdowns.</p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <h3>Ratings & Chemistry Engine</h3>
+            <p>Rosters are rated through mathematical weights: 45% overall ratings, 20% offense, 20% defense, and 15% team chemistry. True balance trumps raw superstar stacking.</p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <h3>Competitive Challenges & Hoop IQ</h3>
+            <p>Push your skills in Hoop IQ mode where overall ratings are hidden as question marks. Rely entirely on your basketball knowledge, player archetypes, and historical instincts.</p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="feature-card">
+            <div class="feature-icon-box" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+                <path d="M18 4H6v7a6 6 0 0 0 12 0V4z"></path>
+              </svg>
+            </div>
+            <h3>Game Center Leaderboards</h3>
+            <p>Submit your combined season scores to Apple Game Center. Compete against strategy fans worldwide to see who can claim the highest dynasty high score.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Strategy Breakdown Section -->
+    <section id="strategy" class="strategy-section" aria-labelledby="strategy-title">
+      <div class="container">
+        <div class="strategy-box">
+          <div class="strategy-grid">
+            <div class="strategy-text">
+              <span class="eyebrow">ROSTER SCIENCE</span>
+              <h2 id="strategy-title">A Perfect Season Takes More Than Star Power</h2>
+              <p>
+                In 82-0, five 99-overall scorers won't automatically survive the 82-game gauntlet. The simulation formula explicitly evaluates lineup balance, perimeter defense, interior rim protection, glass control, and ball distribution.
+              </p>
+              
+              <div class="lineup-positions-row" aria-label="Five Lineup Positions">
+                <div class="pos-tag">
+                  <span class="pos-role">PG</span>
+                  <span class="pos-desc">Playmaking & Pace</span>
+                </div>
+                <div class="pos-tag">
+                  <span class="pos-role">SG</span>
+                  <span class="pos-desc">Perimeter Scoring</span>
+                </div>
+                <div class="pos-tag">
+                  <span class="pos-role">SF</span>
+                  <span class="pos-desc">Two-Way Versatility</span>
+                </div>
+                <div class="pos-tag">
+                  <span class="pos-role">PF</span>
+                  <span class="pos-desc">Interior Defense</span>
+                </div>
+                <div class="pos-tag">
+                  <span class="pos-role">C</span>
+                  <span class="pos-desc">Rim & Glass Anchor</span>
+                </div>
+              </div>
+
+              <div class="ratings-breakdown-list">
+                <div class="rating-metric">
+                  <div class="rating-label-row">
+                    <span>Offense (Scoring + Shooting + Playmaking)</span>
+                    <span style="color: var(--accent-orange)">92 / 99</span>
+                  </div>
+                  <div class="rating-bar-bg"><div class="rating-bar-fill fill-offense"></div></div>
+                </div>
+
+                <div class="rating-metric">
+                  <div class="rating-label-row">
+                    <span>Defense (Lockdown + Athleticism)</span>
+                    <span style="color: var(--accent-cyan)">88 / 99</span>
+                  </div>
+                  <div class="rating-bar-bg"><div class="rating-bar-fill fill-defense"></div></div>
+                </div>
+
+                <div class="rating-metric">
+                  <div class="rating-label-row">
+                    <span>Rebounding (Offensive & Defensive Boards)</span>
+                    <span style="color: var(--stat-success)">85 / 99</span>
+                  </div>
+                  <div class="rating-bar-bg"><div class="rating-bar-fill fill-rebound"></div></div>
+                </div>
+
+                <div class="rating-metric">
+                  <div class="rating-label-row">
+                    <span>Chemistry (Positional Balance & Milestones)</span>
+                    <span style="color: var(--accent-gold)">95% SYNERGY</span>
+                  </div>
+                  <div class="rating-bar-bg"><div class="rating-bar-fill fill-chemistry"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- iPad Real Mockup -->
+            <div class="strategy-visual">
+              <div class="device-ipad">
+                <div class="ipad-camera" aria-hidden="true"></div>
+                <div class="ipad-screen-container">
+                  <img src="assets/images/screens/screen-ipad-lineup.webp" alt="iPad Pro showing complete five-player basketball court lineup and team ratings" class="device-screen-img" width="415" height="565" loading="lazy">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screenshot Showcase Section (Carousel) -->
+    <section id="screenshots" class="showcase-section" aria-labelledby="showcase-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">GALLERY</span>
+          <h2 id="showcase-title">Inside the Simulation</h2>
+          <p>Real in-app captures from iPhone and iPad devices. Explore the authentic draft wheels, player cards, court tactics, and dynasty history logs.</p>
+        </div>
+
+        <div class="carousel-container">
+          <div class="carousel-track">
+            <!-- Slide 1 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-home.webp" alt="82-0 home screen with start dynasty button" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Build Your Basketball Dynasty</p>
+              <p class="slide-subcaption">Quick, intuitive entry into your next season run</p>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-spin-team.webp" alt="Franchise spin wheel screen" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Spin From Different Franchises</p>
+              <p class="slide-subcaption">Random team draws each round keep you adapting</p>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-spin-era.webp" alt="Historical decade spin screen from 1960s to 2020s" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Draft Across Historical Eras</p>
+              <p class="slide-subcaption">Blend 80s grit with 2020s perimeter spacing</p>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-draft-player.webp" alt="Point guard draft card selection showing ratings" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Make Every Pick Count</p>
+              <p class="slide-subcaption">Deep scouting attributes and head-to-head comparison</p>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-lineup-court.webp" alt="Completed 5-man roster tactical court view" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Build a Balanced Lineup</p>
+              <p class="slide-subcaption">Five distinct positions on the court with calculated synergy</p>
+            </div>
+
+            <!-- Slide 6 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-sim-season.webp" alt="Simulating the 82 game regular season with live scores" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Simulate the Full Season</p>
+              <p class="slide-subcaption">Watch regular season records, game logs and scores unfold</p>
+            </div>
+
+            <!-- Slide 7 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-final-record.webp" alt="Final regular season results showing win rate and lineup summary" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Chase the Perfect Record</p>
+              <p class="slide-subcaption">See your final standing, win rate, and performance tier</p>
+            </div>
+
+            <!-- Slide 8 -->
+            <div class="carousel-slide">
+              <div class="device-iphone">
+                <div class="device-notch-island" aria-hidden="true"><div class="camera-lens"></div></div>
+                <div class="device-screen-container">
+                  <img src="assets/images/screens/screen-records-history.webp" alt="Dynasty historical records and season history log" class="device-screen-img" width="335" height="760" loading="lazy">
+                </div>
+              </div>
+              <p class="slide-caption">Climb the Leaderboard</p>
+              <p class="slide-subcaption">Track personal bests and compete on Apple Game Center</p>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="carousel-controls">
+            <button class="carousel-btn carousel-btn-prev" aria-label="Previous screenshot">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <div class="carousel-dots" aria-hidden="true"></div>
+            <button class="carousel-btn carousel-btn-next" aria-label="Next screenshot">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section" aria-labelledby="faq-title">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">COMMON QUESTIONS</span>
+          <h2 id="faq-title">Frequently Asked Questions</h2>
+          <p>Everything you need to know about draft mechanics, season simulations, rules, and compatibility.</p>
+        </div>
+
+        <div class="faq-accordion">
+          <!-- Item 1 -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>What is 82-0: Basketball Draft?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p>82-0 is a basketball roster-building and season-simulation strategy game. You draft a five-player starting lineup across five rounds, with each round dealing a randomized basketball franchise and historical era. After building your squad, you simulate an 82-game regular season and chase the elusive undefeated record.</p>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>How does the draft work?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p>Each round spins a random franchise and historical era (from the 1960s to the 2020s). The game populates an eligible pool of historical and modern player archetypes for a specific position (PG, SG, SF, PF, C). You select one player per round to lock into your five-man lineup.</p>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>How many players do I draft?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p>You draft exactly five players—one at each traditional court position: Point Guard, Shooting Guard, Small Forward, Power Forward, and Center. Completing a full, balanced five-player lineup provides a vital chemistry boost.</p>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>How is the season simulated?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p>The simulator uses your team rating—calculated from overall ability (45%), offense (20%), defense (20%), and team chemistry (15%)—to model game-by-game win probabilities. Realistic random variance is applied so no game is a guaranteed victory, generating authentic box scores, clutch moments, and realistic regular-season standings.</p>
+            </div>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>Can I compete with other players?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p>Yes! 82-0 integrates with Apple Game Center leaderboards using a weighted scoring formula: (Wins × 100) + (Chemistry × 10). The app also supports local peer-to-peer multiplayer over Wi-Fi and Bluetooth for head-to-head draft battles against nearby friends.</p>
+            </div>
+          </div>
+
+          <!-- Item 6: Crucial Disclaimers -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>Is 82-0 affiliated with a professional basketball league?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p><strong>82-0 is an independent basketball strategy game and is not affiliated with or endorsed by any professional basketball league, team, or player organization.</strong> All player statistics and team references are utilized under generic basketball simulation principles with authorized independent artwork.</p>
+            </div>
+          </div>
+
+          <!-- Item 7: Supported Devices -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>Which devices are supported?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p>82-0 is natively built for iOS and iPadOS. It requires iOS 15.6 or later and is fully optimized for iPhone, iPad, and iPod touch models with bespoke screen scaling.</p>
+            </div>
+          </div>
+
+          <!-- Item 8: Support -->
+          <div class="faq-item">
+            <button class="faq-question-btn" aria-expanded="false">
+              <span>How can I contact support?</span>
+              <span class="faq-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-answer">
+              <p>For gameplay assistance, questions, or bug reports, visit our <a href="support/" style="color: var(--accent-orange); text-decoration: underline;">Support Page</a> or reach out directly via email at <a href="mailto:support@82-0.studio" style="color: var(--accent-orange); text-decoration: underline;">support@82-0.studio</a>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final High-Impact CTA Section -->
+    <section class="final-cta-section" aria-labelledby="cta-banner-title">
+      <div class="container">
+        <div class="cta-banner-card">
+          <img src="assets/images/icon-512.webp" alt="82-0 App Icon" class="cta-logo" width="80" height="80">
+          <h2 id="cta-banner-title">Your 82-0 Run Starts Now</h2>
+          <p>Draft your lineup, simulate the season, and see how close you can get to basketball perfection. Available for iPhone and iPad.</p>
+          <div class="cta-buttons-center">
+            <a href="https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298" target="_blank" rel="noopener noreferrer" class="btn btn-primary" aria-label="Get 82-0 on the Apple App Store">
+              <svg width="20" height="20" viewBox="0 0 170 170" fill="currentColor" aria-hidden="true">
+                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.04-7.67-7.81-11.96-14.34-6.19-9.35-11.08-19.98-14.67-31.89-3.59-11.91-5.39-23.36-5.39-34.34 0-14.37 3.63-26.32 10.89-35.85 7.26-9.53 16.29-14.4 27.09-14.61 5.35 0 11.22 1.45 17.62 4.35 6.4 2.91 10.42 4.41 12.06 4.51 1.91-.1 6.16-1.63 12.75-4.6 6.59-2.97 12.21-4.35 16.86-4.14 12.56.74 22.47 5.43 29.74 14.07-10.97 6.64-16.34 15.75-16.12 27.34.22 9.07 3.73 16.73 10.53 22.98 6.8 6.25 14.72 9.77 23.76 10.56-2.12 6.53-4.68 13.06-7.68 19.59zm-38.35-112.59c-.21 2.33-.85 4.67-1.91 7.02-1.06 2.35-2.61 4.74-4.65 7.17-2.76 3.19-5.94 5.79-9.54 7.8-3.6 2.01-6.94 3.18-10.02 3.51-.43-2.12-.48-4.3-.16-6.53.32-2.23 1.09-4.57 2.3-7.02 2.65-5.32 6.22-9.45 10.7-12.39 4.48-2.94 8.9-4.78 13.28-5.51z"/>
+              </svg>
+              <span>Get 82-0 on the App Store</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-group">
+            <img src="assets/images/icon-512.webp" alt="82-0 Icon" class="brand-logo-img" width="36" height="36">
+            <div class="brand-text">
+              <span class="brand-name">82-0</span>
+              <span class="brand-tag">Basketball Draft</span>
+            </div>
+          </div>
+          <p>
+            The ultimate basketball roster-building and season simulation experience on iPhone and iPad.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-col-title">Navigation</div>
+          <ul class="footer-nav-list">
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#screenshots">Screenshots</a></li>
+            <li><a href="#strategy">Strategy & Ratings</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-col-title">Legal & Contact</div>
+          <ul class="footer-nav-list">
+            <li><a href="privacy/">Privacy Policy</a></li>
+            <li><a href="support/">Support & Terms</a></li>
+            <li><a href="mailto:support@82-0.studio">support@82-0.studio</a></li>
+            <li><a href="https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298" target="_blank" rel="noopener noreferrer">App Store Listing</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <p class="footer-disclaimer">
+          <strong>Independent App Disclaimer:</strong> 82-0 is an independent basketball strategy and simulation game. It is not affiliated with, endorsed by, or licensed by any professional basketball league, team, or player organization. All trademarks, names, and team references are used purely for descriptive, simulation, and identification purposes.
+        </p>
+        <p class="footer-copy">
+          &copy; 2026 82-0: Basketball Draft. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="assets/js/main.js" defer></script>
 </body>
 </html>

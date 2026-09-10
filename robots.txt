@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://82-0.studio/sitemap.xml
