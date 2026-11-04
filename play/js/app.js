@@ -31,7 +31,7 @@ const GAME_CATALOG = {
     record: '82',
     accent: '#ff6a1a',
     live: true,
-    icon: new URL('../../assets/images/icon-512.webp', import.meta.url).href,
+    icon: new URL('../../assets/images/icon-82-0.jpg', import.meta.url).href,
     appStore: APP_STORE_URL,
   },
   '17-0': {
@@ -90,7 +90,7 @@ const STRETCHES = [[1, 20, null], [21, 41, 'rotationAudit'], [42, 61, 'identityC
 function mountAppSwitcher() {
   const items = Object.entries(GAME_CATALOG).map(([id, game]) => `
     <button class="app-option${id === app.selectedGame ? ' active' : ''}" type="button" data-act="switch-game" data-game="${id}" aria-pressed="${String(id === app.selectedGame)}" style="--game-accent:${game.accent}">
-      <span class="app-option-mark" aria-hidden="true"><b>${game.record}</b><i>-0</i></span>
+      <span class="app-option-mark" aria-hidden="true"><img src="${game.icon}" alt="" width="46" height="46"></span>
       <span class="app-option-copy"><b>${game.title}</b><small>${game.sport}</small></span>
       <span class="app-option-status ${game.live ? 'live' : ''}">${game.live ? 'Live' : 'Soon'}</span>
     </button>`).join('');
