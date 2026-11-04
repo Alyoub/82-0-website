@@ -1362,3 +1362,12 @@ h1, h2, h3, h4, .font-display {
     animation: none !important;
   }
 }
+
+/* Web edition link in the main nav */
+.nav-link-play {
+  color: var(--accent-orange) !important;
+  font-weight: 700;
+}
+.nav-link-play:hover {
+  color: var(--accent-orange-hover) !important;
+}
