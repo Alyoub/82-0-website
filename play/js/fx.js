@@ -50,6 +50,8 @@ function noise(ac, { at = 0, dur = 0.08, gain = 0.05, freq = 2000 }) {
   src.start(t);
 }
 
+let lastReelTick = 0;
+
 export const sound = {
   tap() { const ac = audio(); if (ac) tone(ac, { freq: 660, dur: 0.05, gain: 0.03, type: 'triangle' }); },
   tick() { const ac = audio(); if (ac) tone(ac, { freq: 1180, dur: 0.04, gain: 0.025, type: 'square' }); },
@@ -75,6 +77,27 @@ export const sound = {
   whistle() {
     const ac = audio(); if (!ac) return;
     tone(ac, { freq: 2300, dur: 0.32, gain: 0.03, type: 'sine', slide: 120 });
+  },
+  spinStart() {
+    const ac = audio(); if (!ac) return;
+    tone(ac, { freq: 180, dur: 0.35, gain: 0.05, type: 'sawtooth', slide: 520 });
+    noise(ac, { dur: 0.12, gain: 0.05, freq: 3000 });
+  },
+  reelTick() {
+    const now = performance.now();
+    if (now - lastReelTick < 55) return;
+    lastReelTick = now;
+    const ac = audio(); if (!ac) return;
+    tone(ac, { freq: 1400 + Math.random() * 300, dur: 0.022, gain: 0.016, type: 'square' });
+  },
+  reelStop() {
+    const ac = audio(); if (!ac) return;
+    tone(ac, { freq: 170, dur: 0.16, gain: 0.11, slide: -90 });
+    noise(ac, { dur: 0.05, gain: 0.07, freq: 1100 });
+  },
+  jackpot() {
+    const ac = audio(); if (!ac) return;
+    [659, 784, 988, 1319].forEach((f, i) => tone(ac, { freq: f, at: i * 0.07, dur: 0.22, gain: 0.045, type: 'triangle' }));
   },
   finale(wins) {
     const ac = audio(); if (!ac) return;

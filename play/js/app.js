@@ -9,7 +9,7 @@ import * as E from './engine.js';
 import { DraftSession, PHASES } from './session.js';
 import { Settings, IdentityConfig, History, achievements, APP_STORE_URL } from './store.js';
 import {
-  esc, icon, APPLE_ICON, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, teamColors, ring,
+  esc, icon, APPLE_ICON, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, ring,
   ovrRing, miniBar, fitClass, fitLabel, signed, delta, court, strip,
 } from './ui.js';
 import { initFx, sound, haptic, canVibrate, confetti } from './fx.js';
@@ -18,7 +18,7 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const app = { db: null, session: null, history: null, settings: null, identity: null, route: null, historyFilter: 'all', fresh: null, busy: false };
+const app = { db: null, session: null, history: null, settings: null, identity: null, route: null, historyFilter: 'all', fresh: null, busy: false, justLanded: false, autoSpin: false };
 
 const ROUTES = ['home', 'draft', 'season', 'history', 'trophies', 'settings'];
 const TITLES = {
@@ -29,7 +29,6 @@ const TITLES = {
   trophies: 'Trophy Case · 82-0',
   settings: 'Settings · 82-0',
 };
-const FILE_NAMES = [['FRANCHISE FILE', 'shield'], ['TIME-CAPSULE FILE', 'clock'], ['COURTSIDE FILE', 'court']];
 const RING_COLORS = { off: '#ff7a2e', def: '#00d2ff', sht: '#ffc726', ply: '#e056fd', reb: '#34d399', ath: '#8b5cf6' };
 const STRETCHES = [[1, 20, null], [21, 41, 'rotationAudit'], [42, 61, 'identityCall'], [62, 82, 'finalPush']];
 
@@ -151,6 +150,10 @@ function render(routeChanged = true) {
   app.fresh = null;
 
   if (r === 'season') mountSeason();
+  if (r === 'draft' && app.autoSpin && app.session.phase === PHASES.choosingReport) {
+    app.autoSpin = false;
+    setTimeout(spin, 260);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -204,7 +207,7 @@ function viewHome() {
     <section class="card" aria-labelledby="loop-title">
       <div class="card-head"><h2 class="card-title" id="loop-title">The core loop</h2><span class="chip">6 picks · 82 games</span></div>
       <div class="loop-steps">
-        <div class="loop-step"><i>1</i><b>SCOUT</b><span>Open a sealed team + era file</span></div>
+        <div class="loop-step"><i>1</i><b>SPIN</b><span>Random team + era</span></div>
         <div class="loop-step"><i>2</i><b>DRAFT</b><span>Pick 5 starters</span></div>
         <div class="loop-step"><i>3</i><b>BENCH</b><span>Add a sixth man</span></div>
         <div class="loop-step"><i>4</i><b>SIM</b><span>Coach 82 games</span></div>
@@ -251,7 +254,7 @@ function viewDraft() {
   if (s.phase === PHASES.rosterComplete) return viewLocked();
 
   const stageIdx = { [PHASES.choosingReport]: 0, [PHASES.reportRevealed]: 1, [PHASES.comparingPlayers]: 2 }[s.phase] ?? 0;
-  const stages = ['Choose file', 'Reveal', 'Draft'].map((label, i) => {
+  const stages = ['Spin', 'Reveal', 'Draft'].map((label, i) => {
     const cls = i < stageIdx ? 'done' : i === stageIdx ? 'on' : '';
     const dot = i < stageIdx ? icon('check') : i + 1;
     const line = i < 2 ? `<li class="stage-line ${i < stageIdx ? 'done' : ''}" aria-hidden="true"></li>` : '';
@@ -307,59 +310,93 @@ function metricsBlock(m) {
   </div>`;
 }
 
+// ---------------------------------------------------------------------------
+// Slot machine (team + era reels)
+// ---------------------------------------------------------------------------
+
+const QMARK_ITEM = '<div class="ri"><span class="ri-q">?</span></div>';
+const BLANK_ITEM = '<div class="ri ri-blank"></div>';
+
+function teamItem(team, target = false) {
+  const ti = tid(team);
+  return `<div class="ri${target ? ' target' : ''}">${teamBadge(team, ti)}<span class="ri-name">${esc(ti.name)}</span></div>`;
+}
+
+function eraItem(era, target = false) {
+  return `<div class="ri${target ? ' target' : ''}"><span class="ri-era">${esc(era.label)}</span><span class="ri-sub">${era.startYear}–${era.endYear}</span></div>`;
+}
+
+/** Fixed neighbours so the landed reel looks identical before and after re-render. */
+function neighbours(list, item) {
+  const i = Math.max(0, list.findIndex((x) => x.id === item.id));
+  return [list[(i - 1 + list.length) % list.length], list[(i + 1) % list.length]];
+}
+
+function reelCab(kind, label, items, center, won) {
+  const leds = (n) => Array.from({ length: n }, (_, i) => `<i class="led" style="--i:${i}"></i>`).join('');
+  return `<div class="reel-cab ${kind}${won ? ' won' : ''}" data-reel="${kind}">
+    <div class="reel-label"><span class="leds">${leds(3)}</span><span>${label}</span><span class="leds">${leds(3)}</span></div>
+    <div class="reel-bezel"><div class="reel-window">
+      <div class="reel-strip" style="transform:translateY(calc(var(--item-h) * -${center + 0.5}))">${items.join('')}</div>
+      <span class="rail l"></span><span class="rail r"></span><div class="reel-shade"></div>
+    </div></div>
+    <span class="payline l"></span><span class="payline r"></span>
+  </div>`;
+}
+
+/** Resting reels show "?"; landed reels show the committed team + era. */
+function slotHtml(report, won = false) {
+  if (!report) {
+    return `<div class="slot" aria-hidden="true">
+      ${reelCab('team', 'TEAM', [BLANK_ITEM, QMARK_ITEM, BLANK_ITEM], 1)}
+      ${reelCab('era', 'ERA', [BLANK_ITEM, QMARK_ITEM, BLANK_ITEM], 1)}</div>`;
+  }
+  const [tp, tn] = neighbours(app.db.teams, report.team);
+  const [ep, en] = neighbours(app.db.eras, report.era);
+  return `<div class="slot" role="img" aria-label="${esc(tid(report.team).name)}, ${esc(report.era.label)}">
+    ${reelCab('team', 'TEAM', [teamItem(tp), teamItem(report.team, true), teamItem(tn)], 1, won)}
+    ${reelCab('era', 'ERA', [eraItem(ep), eraItem(report.era, true), eraItem(en)], 1, won)}</div>`;
+}
+
 function htmlChoose() {
   const s = app.session;
-  const sel = s.s.selectedReportIndex;
-  const folders = s.s.reports.map((r, i) => {
-    const [title, ic] = FILE_NAMES[i] || FILE_NAMES[0];
-    return `<button class="folder" type="button" data-act="select-report" data-idx="${i}" aria-pressed="${i === sel}" aria-label="${title}, sealed report ${i + 1}">
-      <span class="folder-back" aria-hidden="true"></span>
-      <span class="folder-tab" aria-hidden="true">0${i + 1}</span>
-      <span class="folder-body">
-        <span class="folder-icon">${icon(ic)}</span><span class="folder-sep"></span>
-        <span class="folder-text"><span class="folder-title">${title}</span><span class="folder-sub">Team + era concealed</span></span>
-        <span class="folder-stamp" aria-hidden="true">SEALED</span>
-      </span>
-    </button>`;
-  }).join('');
-  const left = s.scoutAgainRemaining;
+  const role = s.isDraftingSixthMan ? 'sixth man' : E.POSITION_NAMES[s.s.currentPosition].toLowerCase();
   const intro = s.isDraftingSixthMan
-    ? 'Three sealed files for your sixth man. Any position qualifies — look for scoring, coverage and fresh legs.'
-    : `Three sealed files for your ${E.POSITION_NAMES[s.s.currentPosition].toLowerCase()}. Each one hides a franchise and a decade.`;
+    ? 'One random franchise, one random decade. Any position qualifies — look for scoring, coverage and fresh legs.'
+    : `One random franchise, one random decade. Everyone who played ${s.s.currentPosition} there becomes your pool.`;
   return `
-    <div class="phase-head"><h2>Choose your next lead</h2><p>${intro}</p></div>
-    <div class="folders" role="group" aria-label="Sealed scouting reports">${folders}</div>
-    <div class="phase-actions">
-      <button class="btn btn-ghost" data-act="scout-again" ${left ? '' : 'disabled'}>${icon('shuffle')} Scout again <span class="badge-count">${left} left</span></button>
-      <button class="btn btn-primary btn-xl" data-act="open-report">Open selected report ${icon('arrow')}</button>
-    </div>
-    ${s.isDraftingSixthMan ? '' : `<p class="hint">${icon('info')} Tap an open spot in your lineup to draft a different position first.</p>`}
-    <div class="kbd-hint" style="margin-top:12px"><span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> choose a file</span><span><kbd>Enter</kbd> open it</span></div>`;
+    <div class="phase-head"><h2>Spin for your ${role}</h2><p>${intro}</p></div>
+    ${slotHtml(null)}
+    <div class="spin-actions">
+      <button class="btn btn-primary spin-btn" data-act="spin" id="spin-btn">${icon('refresh')} SPIN</button>
+      ${s.isDraftingSixthMan ? '' : `<p class="hint">${icon('info')} Tap an open spot in your lineup to draft a different position first.</p>`}
+      <div class="kbd-hint"><span><kbd>Space</kbd> or <kbd>Enter</kbd> spin</span></div>
+    </div>`;
 }
 
 function htmlReveal() {
   const s = app.session;
   const r = s.s.committedReport;
   const ti = tid(r.team);
-  const { c1, c2 } = teamColors(r.team);
   const n = r.eligiblePlayers.length;
+  const left = s.scoutAgainRemaining;
+  const won = app.justLanded;
+  app.justLanded = false;
   return `
-    <div class="dossier" style="--tc:${c1};--tc2:${c2}">
-      <div class="dossier-top">SCOUTING REPORT · FILE 0${s.s.selectedReportIndex + 1}</div>
-      <hr>
-      ${teamBadge(r.team, ti, 'lg')}
-      <h2 class="dossier-team">${esc(ti.name)}</h2>
-      <div class="dossier-era">${r.era.startYear} – ${r.era.endYear}</div>
-      <hr>
-      <div class="dossier-court">${BOARD_LINES}<div class="ball">${BALL_SVG}</div></div>
-      <div class="dossier-pool">${r.isSixthMan ? 'ANY-POSITION SIXTH MAN POOL' : `${E.POSITION_NAMES[r.position].toUpperCase()} POOL`}</div>
-      <hr>
-      <div class="dossier-count">${icon('users')}<b>${n}</b><span>${n === 1 ? 'player' : 'players'}<br>available</span></div>
-      <div class="dossier-stamp" aria-hidden="true">OPENED</div>
-    </div>
-    <div class="reveal-actions">
-      <button class="btn btn-primary btn-xl btn-block" data-act="scout-players">Scout the players ${icon('arrow')}</button>
-      <div class="kbd-hint" style="justify-content:center;margin-top:12px"><span><kbd>Enter</kbd> scout the players</span></div>
+    <div class="phase-head"><h2>${esc(ti.name)} · ${esc(r.era.label)}</h2><p>The reels have spoken. Scout the pool and draft one.</p></div>
+    ${slotHtml(r, won)}
+    <div class="spin-result">
+      <div class="sr-top">
+        ${teamBadge(r.team, ti, 'lg')}
+        <div class="sr-text"><div class="kicker">${r.isSixthMan ? 'Any-position sixth man pool' : `${E.POSITION_NAMES[r.position]} pool`}</div>
+          <b>${esc(ti.name)}</b><span>${r.era.startYear} – ${r.era.endYear}</span></div>
+        <div class="sr-count"><b class="num">${n}</b><span>${n === 1 ? 'PLAYER' : 'PLAYERS'}</span></div>
+      </div>
+      <div class="sr-actions">
+        <button class="btn btn-primary btn-xl" data-act="scout-players">Scout the players ${icon('arrow')}</button>
+        <button class="btn btn-gold" data-act="respin" ${left ? '' : 'disabled'}>${icon('refresh')} Respin <span class="badge-count">${left} left</span></button>
+      </div>
+      <div class="kbd-hint"><span><kbd>Enter</kbd> scout the players</span>${left ? '<span><kbd>R</kbd> respin</span>' : ''}</div>
     </div>`;
 }
 
@@ -369,8 +406,10 @@ function htmlCompare() {
   const ti = tid(r.team);
   const sel = s.s.selectedPlayer;
   const rows = r.eligiblePlayers.map((p, i) => prow(p, sel?.id === p.id, i)).join('');
+  const left = s.scoutAgainRemaining;
   return `
-    <div class="compare-head">${teamBadge(r.team, ti)}<div class="t"><b>${esc(ti.name)} · ${esc(r.era.label)}</b><span>${r.eligiblePlayers.length} eligible ${r.isSixthMan ? 'sixth men' : `at ${r.position}`} — compare and draft one</span></div></div>
+    <div class="compare-head">${teamBadge(r.team, ti)}<div class="t"><b>${esc(ti.name)} · ${esc(r.era.label)}</b><span>${r.eligiblePlayers.length} eligible ${r.isSixthMan ? 'sixth men' : `at ${r.position}`} — compare and draft one</span></div>
+      ${left ? `<button class="btn btn-gold btn-sm" data-act="respin" title="Spin a new team and era">${icon('refresh')} Respin <span class="badge-count">${left}</span></button>` : ''}</div>
     <div class="compare-grid">
       <div class="plist" role="listbox" aria-label="Eligible players">${rows}</div>
       <div id="pdetail">${playerDetail(sel)}</div>
@@ -924,19 +963,13 @@ async function act(name, el) {
     case 'new-draft-now': ensureRecorded(); s.startDraft(); sound.tap(); go('draft'); break;
     case 'home-reset': ensureRecorded(); s.resetToIdle(); go('home'); break;
 
-    case 'choose-pos': s.choosePosition(el.dataset.pos); sound.tap(); render(false); break;
-    case 'select-report': {
-      const i = Number(el.dataset.idx);
-      if (i === s.s.selectedReportIndex && el.dataset.armed === '1') { openReport(); break; }
-      s.selectReport(i);
-      for (const f of $$('.folder')) { f.setAttribute('aria-pressed', String(Number(f.dataset.idx) === i)); f.dataset.armed = ''; }
-      el.dataset.armed = '1';
-      sound.tap();
+    case 'choose-pos':
+      if (app.busy) break;
+      s.choosePosition(el.dataset.pos); sound.tap(); render(false);
       break;
-    }
-    case 'open-report': openReport(); break;
-    case 'scout-again':
-      if (s.scoutAgain()) { sound.open(); toast('Fresh files on the desk'); render(false); }
+    case 'spin': spin(); break;
+    case 'respin':
+      if (!app.busy && s.scoutAgain()) { app.autoSpin = true; render(false); window.scrollTo({ top: 0, behavior: reducedMotion() ? 'auto' : 'smooth' }); }
       break;
     case 'scout-players': s.scoutPlayers(); sound.tap(); render(false); break;
     case 'select-player': {
@@ -1018,22 +1051,90 @@ async function act(name, el) {
   }
 }
 
-function openReport() {
+/**
+ * Spins both reels. The outcome is the report already generated and persisted
+ * for this pick, so a refresh mid-spin lands on the same team and era.
+ */
+async function spin() {
   const s = app.session;
   if (app.busy || s.phase !== PHASES.choosingReport) return;
-  const folder = $(`.folder[data-idx="${s.s.selectedReportIndex}"]`);
-  sound.open();
-  haptic(12);
-  if (!folder || reducedMotion()) { s.openSelectedReport(); render(false); return; }
+  const report = s.s.reports[s.s.selectedReportIndex];
+  if (!report) return;
   app.busy = true;
-  folder.classList.add('opening');
-  $('.folders')?.classList.add('dim');
-  setTimeout(() => {
-    app.busy = false;
-    s.openSelectedReport();
-    render(false);
-    sound.stamp();
-  }, 430);
+  const btn = $('#spin-btn');
+  if (btn) { btn.disabled = true; btn.classList.add('spinning'); }
+  $$('.strip-slot.pickable, .tok[data-act="choose-pos"]').forEach((b) => { b.disabled = true; });
+  haptic(12);
+
+  const teamCab = $('.reel-cab.team');
+  const eraCab = $('.reel-cab.era');
+  if (teamCab && eraCab && !reducedMotion() && typeof Element.prototype.animate === 'function') {
+    sound.spinStart();
+    const [tp, tn] = neighbours(app.db.teams, report.team);
+    const [ep, en] = neighbours(app.db.eras, report.era);
+    const teamFill = E.shuffled(app.db.teams.filter((t) => t.id !== report.team.id)).slice(0, 22);
+    const eraStart = Math.floor(Math.random() * app.db.eras.length);
+    const eraFill = Array.from({ length: 26 }, (_, i) => app.db.eras[(eraStart + i) % app.db.eras.length]);
+    await Promise.all([
+      animateReel(teamCab, [teamItem(tp), teamItem(report.team, true), teamItem(tn), ...teamFill.map((t) => teamItem(t))], 1900),
+      animateReel(eraCab, [eraItem(ep), eraItem(report.era, true), eraItem(en), ...eraFill.map((e) => eraItem(e))], 2650),
+    ]);
+    await new Promise((r) => setTimeout(r, 180));
+  }
+
+  app.busy = false;
+  if (s.phase !== PHASES.choosingReport) return;
+  s.openSelectedReport();
+  app.justLanded = true;
+  sound.jackpot();
+  haptic([18, 50, 18]);
+  if (app.route === 'draft') render(false);
+}
+
+/**
+ * Builds a strip of [prev, TARGET, next, ...fillers, blank, ?, blank] and rolls
+ * it downward from the "?" to the target, then settles with a small clunk.
+ */
+function animateReel(cab, items, duration) {
+  const strip = $('.reel-strip', cab);
+  strip.innerHTML = [...items, BLANK_ITEM, QMARK_ITEM, BLANK_ITEM].join('');
+  const h = strip.firstElementChild.getBoundingClientRect().height;
+  const y = (i) => -(i + 0.5) * h;
+  const start = items.length + 1;
+  strip.style.transform = `translateY(${y(start)}px)`;
+  cab.classList.add('spinning');
+
+  const move = strip.animate(
+    [{ transform: `translateY(${y(start)}px)` }, { transform: `translateY(${y(1)}px)` }],
+    { duration, easing: 'cubic-bezier(0.18, 0.62, 0.16, 1)', fill: 'forwards' },
+  );
+  strip.animate(
+    [{ filter: 'blur(0px)' }, { filter: 'blur(2.6px)', offset: 0.14 }, { filter: 'blur(1.8px)', offset: 0.55 }, { filter: 'blur(0px)', offset: 0.86 }, { filter: 'blur(0px)' }],
+    { duration },
+  );
+
+  let last = start;
+  let raf = 0;
+  const watch = () => {
+    const m = new DOMMatrixReadOnly(getComputedStyle(strip).transform);
+    const idx = Math.round(-m.m42 / h - 0.5);
+    if (idx !== last) { last = idx; sound.reelTick(); }
+    raf = requestAnimationFrame(watch);
+  };
+  raf = requestAnimationFrame(watch);
+
+  return move.finished.then(() => {
+    cancelAnimationFrame(raf);
+    strip.style.transform = `translateY(${y(1)}px)`;
+    move.cancel();
+    cab.classList.remove('spinning');
+    sound.reelStop();
+    haptic(15);
+    return strip.animate(
+      [{ transform: `translateY(${y(1)}px)` }, { transform: `translateY(${y(1) + 10}px)`, offset: 0.35 }, { transform: `translateY(${y(1)}px)` }],
+      { duration: 320, easing: 'ease-out' },
+    ).finished;
+  });
 }
 
 function selectPlayer(p, fromClick) {
@@ -1102,10 +1203,11 @@ function onKey(e) {
 
   if (app.route === 'draft') {
     if (s.phase === PHASES.choosingReport) {
-      if (/^[123]$/.test(e.key)) { e.preventDefault(); $(`.folder[data-idx="${Number(e.key) - 1}"]`)?.click(); }
-      else if (e.key === 'Enter' && !onControl) { e.preventDefault(); openReport(); }
+      if ((e.key === ' ' || e.key === 'Enter') && !onControl) { e.preventDefault(); spin(); }
     } else if (s.phase === PHASES.reportRevealed && e.key === 'Enter' && !onControl) {
       e.preventDefault(); act('scout-players');
+    } else if (s.phase === PHASES.reportRevealed && e.key.toLowerCase() === 'r') {
+      act('respin');
     } else if (s.phase === PHASES.comparingPlayers) {
       const list = s.s.committedReport.eligiblePlayers;
       const idx = list.findIndex((p) => p.id === s.s.selectedPlayer?.id);

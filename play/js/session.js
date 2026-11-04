@@ -127,12 +127,22 @@ export class DraftSession {
     this.commit();
   }
 
+  /**
+   * Respin: replaces the pending team + era with a fresh one (avoiding teams
+   * already shown) and returns to the spin step. Usable before or after the
+   * reveal, once per draft.
+   */
   scoutAgain() {
     const s = this.s;
-    if (s.phase !== PHASES.choosingReport || this.scoutAgainRemaining <= 0) return false;
+    const allowed = [PHASES.choosingReport, PHASES.reportRevealed, PHASES.comparingPlayers];
+    if (!allowed.includes(s.phase) || this.scoutAgainRemaining <= 0) return false;
     const avoid = [...s.recentTeamIds, ...s.reports.map((r) => r.team.id)];
+    if (s.committedReport) avoid.push(s.committedReport.team.id);
     s.reports = this.makeThreeReports(s.currentPosition, this.isDraftingSixthMan, avoid);
     s.selectedReportIndex = 0;
+    s.committedReport = null;
+    s.selectedPlayer = null;
+    s.phase = PHASES.choosingReport;
     s.scoutAgainUsed += 1;
     this.commit();
     return true;
