@@ -7,13 +7,14 @@
 
 import * as E from './engine.js';
 import { DraftSession, PHASES } from './session.js';
-import { FootballGame } from './football.js';
+import { createFootball, FB_APP_STORE_URL } from './football.js';
 import { Settings, IdentityConfig, History, achievements, APP_STORE_URL } from './store.js';
 import {
   esc, icon, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, ring,
   ovrRing, miniBar, fitClass, fitLabel, signed, delta, court, strip,
 } from './ui.js';
 import { initFx, sound, haptic, canVibrate, confetti } from './fx.js';
+import { QMARK_ITEM, BLANK_ITEM, reelCab, animateReel, neighbours } from './reels.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -29,16 +30,20 @@ const GAME_CATALOG = {
     record: '82',
     accent: '#ff6a1a',
     live: true,
+    icon: new URL('../../assets/images/icon-512.webp', import.meta.url).href,
+    appStore: APP_STORE_URL,
   },
   '17-0': {
     title: '17-0',
-    tag: 'FOOTBALL CHALLENGE',
+    tag: 'FOOTBALL DRAFT',
     sport: 'Football',
     record: '17',
-    accent: '#34d399',
+    accent: '#19c98a',
     live: true,
     mode: 'football',
-    description: 'Build a football roster, survive every matchup and chase a flawless 17-0 regular season.',
+    icon: new URL('../../assets/images/icon-17-0.jpg', import.meta.url).href,
+    appStore: FB_APP_STORE_URL,
+    description: 'Draft five football legends, make three coaching calls and chase a flawless 17-0 regular season.',
   },
   '162-0': {
     title: '162-0',
@@ -50,7 +55,15 @@ const GAME_CATALOG = {
   },
 };
 
-const football = new FootballGame();
+const football = createFootball({
+  go: (r) => go(r),
+  render: (changed = false) => render(changed),
+  toast: (msg) => toast(msg),
+  dialog: (id) => dialog(id),
+  confirm: (opts) => confirmDialog(opts),
+  route: () => app.route,
+  get settings() { return app.settings; },
+});
 
 const ROUTES = ['home', 'draft', 'season', 'history', 'trophies', 'settings'];
 const TITLES = {
@@ -195,6 +208,14 @@ function render(routeChanged = true) {
   $('.brand-name').textContent = selected.title;
   $('.brand-tag').textContent = selected.tag;
   $('.brand').setAttribute('aria-label', `${selected.title} ${selected.sport} game home`);
+  const brandImg = $('.brand img');
+  if (brandImg && selected.icon && brandImg.src !== selected.icon) brandImg.src = selected.icon;
+  const pill = $('.app-pill');
+  if (pill && selected.appStore) {
+    pill.href = selected.appStore;
+    pill.setAttribute('aria-label', `Get ${selected.title} on the App Store`);
+  }
+  if (selected.mode !== 'football') football.stop();
   for (const item of $$('.app-option')) {
     const active = item.dataset.game === app.selectedGame;
     item.classList.toggle('active', active);
@@ -220,7 +241,7 @@ function render(routeChanged = true) {
 
   if (selected.mode === 'football') {
     runner.stop();
-    document.body.classList.toggle('in-flow', football.isFlowRoute(r));
+    document.body.classList.toggle('in-flow', r === 'draft' || r === 'season');
     document.body.dataset.route = r;
     const tab = r === 'draft' || r === 'season' ? 'home' : r;
     for (const a of $$('[data-tab]')) {
@@ -228,7 +249,7 @@ function render(routeChanged = true) {
     }
     document.title = football.title(r);
     const view = $('#view');
-    view.innerHTML = football.render(r);
+    view.innerHTML = football.view(r);
     if (routeChanged) {
       view.classList.remove('view-enter');
       void view.offsetWidth;
@@ -236,6 +257,7 @@ function render(routeChanged = true) {
       window.scrollTo({ top: 0 });
     }
     view.focus({ preventScroll: true });
+    football.mounted(r);
     return;
   }
 
@@ -285,6 +307,7 @@ function switchGame(id) {
     return;
   }
   app.selectedGame = id;
+  if (GAME_CATALOG[id].live) app.settings?.set('game', id);
   document.body.classList.remove('sidebar-open');
   $('.sidebar-toggle')?.setAttribute('aria-expanded', 'false');
   if (hashRoute() !== 'home') window.history.replaceState(null, '', '#/home');
@@ -438,9 +461,6 @@ function metricsBlock(m) {
 // Slot machine (team + era reels)
 // ---------------------------------------------------------------------------
 
-const QMARK_ITEM = '<div class="ri"><span class="ri-q">?</span></div>';
-const BLANK_ITEM = '<div class="ri ri-blank"></div>';
-
 function teamItem(team, target = false) {
   const ti = tid(team);
   return `<div class="ri${target ? ' target' : ''}">${teamBadge(team, ti)}<span class="ri-name">${esc(ti.name)}</span></div>`;
@@ -448,24 +468,6 @@ function teamItem(team, target = false) {
 
 function eraItem(era, target = false) {
   return `<div class="ri${target ? ' target' : ''}"><span class="ri-era">${esc(era.label)}</span><span class="ri-sub">${era.startYear}–${era.endYear}</span></div>`;
-}
-
-/** Fixed neighbours so the landed reel looks identical before and after re-render. */
-function neighbours(list, item) {
-  const i = Math.max(0, list.findIndex((x) => x.id === item.id));
-  return [list[(i - 1 + list.length) % list.length], list[(i + 1) % list.length]];
-}
-
-function reelCab(kind, label, items, center, won) {
-  const leds = (n) => Array.from({ length: n }, (_, i) => `<i class="led" style="--i:${i}"></i>`).join('');
-  return `<div class="reel-cab ${kind}${won ? ' won' : ''}" data-reel="${kind}">
-    <div class="reel-label"><span class="leds">${leds(3)}</span><span>${label}</span><span class="leds">${leds(3)}</span></div>
-    <div class="reel-bezel"><div class="reel-window">
-      <div class="reel-strip" style="transform:translateY(calc(var(--item-h) * -${center + 0.5}))">${items.join('')}</div>
-      <span class="rail l"></span><span class="rail r"></span><div class="reel-shade"></div>
-    </div></div>
-    <span class="payline l"></span><span class="payline r"></span>
-  </div>`;
 }
 
 /** Resting reels show "?"; landed reels show the committed team + era. */
@@ -1076,11 +1078,7 @@ function viewSettings() {
 async function act(name, el) {
   const s = app.session;
   if (app.selectedGame === '17-0' && name.startsWith('fb-')) {
-    const result = await football.handleAction(name, el);
-    if (!result) return;
-    if (result.route) go(result.route);
-    else if (result.render) render(false);
-    if (result.message) toast(result.message);
+    await football.act(name, el);
     return;
   }
   switch (name) {
@@ -1232,52 +1230,6 @@ async function spin() {
   if (app.route === 'draft') render(false);
 }
 
-/**
- * Builds a strip of [prev, TARGET, next, ...fillers, blank, ?, blank] and rolls
- * it downward from the "?" to the target, then settles with a small clunk.
- */
-function animateReel(cab, items, duration) {
-  const strip = $('.reel-strip', cab);
-  strip.innerHTML = [...items, BLANK_ITEM, QMARK_ITEM, BLANK_ITEM].join('');
-  const h = strip.firstElementChild.getBoundingClientRect().height;
-  const y = (i) => -(i + 0.5) * h;
-  const start = items.length + 1;
-  strip.style.transform = `translateY(${y(start)}px)`;
-  cab.classList.add('spinning');
-
-  const move = strip.animate(
-    [{ transform: `translateY(${y(start)}px)` }, { transform: `translateY(${y(1)}px)` }],
-    { duration, easing: 'cubic-bezier(0.18, 0.62, 0.16, 1)', fill: 'forwards' },
-  );
-  strip.animate(
-    [{ filter: 'blur(0px)' }, { filter: 'blur(2.6px)', offset: 0.14 }, { filter: 'blur(1.8px)', offset: 0.55 }, { filter: 'blur(0px)', offset: 0.86 }, { filter: 'blur(0px)' }],
-    { duration },
-  );
-
-  let last = start;
-  let raf = 0;
-  const watch = () => {
-    const m = new DOMMatrixReadOnly(getComputedStyle(strip).transform);
-    const idx = Math.round(-m.m42 / h - 0.5);
-    if (idx !== last) { last = idx; sound.reelTick(); }
-    raf = requestAnimationFrame(watch);
-  };
-  raf = requestAnimationFrame(watch);
-
-  return move.finished.then(() => {
-    cancelAnimationFrame(raf);
-    strip.style.transform = `translateY(${y(1)}px)`;
-    move.cancel();
-    cab.classList.remove('spinning');
-    sound.reelStop();
-    haptic(15);
-    return strip.animate(
-      [{ transform: `translateY(${y(1)}px)` }, { transform: `translateY(${y(1) + 10}px)`, offset: 0.35 }, { transform: `translateY(${y(1)}px)` }],
-      { duration: 320, easing: 'ease-out' },
-    ).finished;
-  });
-}
-
 function selectPlayer(p, fromClick) {
   const s = app.session;
   s.selectPlayer(p);
@@ -1337,7 +1289,7 @@ function onKey(e) {
   }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-  if (app.selectedGame === '17-0') return;
+  if (app.selectedGame === '17-0') { football.onKey(e); return; }
   const onControl = ['BUTTON', 'A'].includes(e.target.tagName);
   const s = app.session;
 
@@ -1384,8 +1336,19 @@ async function loadData() {
   return { players, teams, eras, teamById: new Map(teams.map((t) => [t.id, t])) };
 }
 
+/** Returning 17-0 players (or ?game=17-0 links) get the 17-0 splash and accent before data loads. */
+function preselectGame() {
+  let game = null;
+  try { game = new URLSearchParams(location.search).get('game') || JSON.parse(localStorage.getItem('820.web.settings.v1') || '{}').game; } catch { /* storage blocked */ }
+  if (game !== '17-0') return;
+  document.body.dataset.game = '17-0';
+  const mark = $('.splash-mark');
+  if (mark) mark.innerHTML = '17<span>-</span>0';
+}
+
 async function boot() {
   const splash = $('#splash');
+  preselectGame();
   try {
     app.db = await loadData();
   } catch (err) {
@@ -1400,6 +1363,20 @@ async function boot() {
   app.history = new History();
   app.session = new DraftSession(app.db);
   ensureRecorded();
+
+  // Last game played, or ?game=17-0 from a shared link.
+  const wanted = new URLSearchParams(location.search).get('game');
+  if (wanted) {
+    if (GAME_CATALOG[wanted]?.live) app.settings.set('game', wanted);
+    const url = new URL(location.href);
+    url.searchParams.delete('game');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }
+  const saved = app.settings.get('game');
+  if (GAME_CATALOG[saved]?.live) app.selectedGame = saved;
+  if (app.selectedGame === '17-0') {
+    try { await football.load(); } catch (err) { console.error(err); }
+  }
 
   window.addEventListener('hashchange', onRoute);
   document.addEventListener('click', onClick);

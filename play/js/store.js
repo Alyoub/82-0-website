@@ -46,9 +46,12 @@ export class Settings {
 // ---------------------------------------------------------------------------
 
 export class IdentityConfig {
-  constructor(storage = globalThis.localStorage) {
+  /** `url`/`cacheKey` let each game follow its own iOS app's config (82-0 by default). */
+  constructor(storage = globalThis.localStorage, { url = REMOTE_CONFIG_URL, cacheKey = CONFIG_KEY } = {}) {
     this.storage = storage;
-    const cached = readJSON(storage, CONFIG_KEY, null);
+    this.url = url;
+    this.cacheKey = cacheKey;
+    const cached = readJSON(storage, cacheKey, null);
     this.realNames = WEB_REAL_NAMES === 'remote' ? !!cached?.realnames : !!WEB_REAL_NAMES;
   }
 
@@ -58,12 +61,12 @@ export class IdentityConfig {
     try {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 8000);
-      const res = await fetch(REMOTE_CONFIG_URL, { cache: 'no-store', signal: ctrl.signal });
+      const res = await fetch(this.url, { cache: 'no-store', signal: ctrl.signal });
       clearTimeout(timer);
       if (!res.ok) return false;
       const config = await res.json();
       if (typeof config?.realnames !== 'boolean') return false;
-      writeJSON(this.storage, CONFIG_KEY, config);
+      writeJSON(this.storage, this.cacheKey, config);
       const changed = config.realnames !== this.realNames;
       this.realNames = config.realnames;
       return changed;
