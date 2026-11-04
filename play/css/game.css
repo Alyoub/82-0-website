@@ -861,6 +861,21 @@ a.set-row:hover b { color: var(--orange-2); }
 .roster-item .avatar { width: 38px; height: 38px; font-size: 13px; }
 .roster-item .rr { display: flex; align-items: center; gap: 8px; }
 
+/* Crawlable "about" copy under the game (home tab only) */
+.seo-about {
+  max-width: 1180px; margin: 0 auto; padding: 0 16px calc(var(--tabbar-h) + 40px + env(safe-area-inset-bottom));
+  color: var(--text-2); font-size: 14.5px; line-height: 1.7;
+}
+.seo-about h1 { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--text); margin-bottom: 8px; }
+.seo-about h3 { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--text); margin: 18px 0 8px; }
+.seo-about ol { padding-left: 1.3em; display: grid; gap: 6px; margin-bottom: 14px; }
+.seo-about strong { color: var(--text); }
+.seo-about a { color: var(--orange-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+body[data-route]:not([data-route="home"]) .seo-about { display: none; }
+body[data-route="home"] #view { padding-bottom: 28px; }
+@media (min-width: 760px) { .seo-about { padding: 8px 24px 56px; } }
+@media (min-width: 960px) { .seo-about { padding-bottom: 64px; } }
+
 /* Toast + confetti */
 #toast {
   position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom)); z-index: 60;

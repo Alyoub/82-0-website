@@ -22,7 +22,7 @@ const app = { db: null, session: null, history: null, settings: null, identity: 
 
 const ROUTES = ['home', 'draft', 'season', 'history', 'trophies', 'settings'];
 const TITLES = {
-  home: 'Play 82-0 Online — Basketball Draft Game',
+  home: 'Play 82-0 Online Free – The 82-0 Basketball Game',
   draft: 'Draft Room · 82-0',
   season: 'Season · 82-0',
   history: 'Season History · 82-0',
@@ -131,6 +131,7 @@ function render(routeChanged = true) {
   if (routeChanged) for (const d of $$('dialog[open]')) d.close();
 
   document.body.classList.toggle('in-flow', r === 'draft' || r === 'season');
+  document.body.dataset.route = r;
   const tab = r === 'draft' || r === 'season' ? 'home' : r;
   for (const a of $$('[data-tab]')) {
     if (a.dataset.tab === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
@@ -190,8 +191,8 @@ function viewHome() {
 
   const recent = app.history.runs.slice(0, 5);
   return `
-  <section class="home-hero" aria-labelledby="home-title">
-    <h1 id="home-title" class="wordmark">82-0</h1>
+  <section class="home-hero" aria-label="82-0 home">
+    <div id="home-title" class="wordmark">82-0</div>
     <div class="hero-kicker">BUILD THE PERFECT FIVE</div>
     <p class="hero-sub">Random team. Random era. Your decision.</p>
     <div class="ball-stage" aria-hidden="true"><div class="ball-floor"></div><div class="ball-ring"></div><div class="ball-float">${BALL_SVG}</div></div>
