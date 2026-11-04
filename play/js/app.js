@@ -7,6 +7,7 @@
 
 import * as E from './engine.js';
 import { DraftSession, PHASES } from './session.js';
+import { FootballGame } from './football.js';
 import { Settings, IdentityConfig, History, achievements, APP_STORE_URL } from './store.js';
 import {
   esc, icon, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, ring,
@@ -35,6 +36,8 @@ const GAME_CATALOG = {
     sport: 'Football',
     record: '17',
     accent: '#34d399',
+    live: true,
+    mode: 'football',
     description: 'Build a football roster, survive every matchup and chase a flawless 17-0 regular season.',
   },
   '162-0': {
@@ -46,6 +49,8 @@ const GAME_CATALOG = {
     description: 'Assemble a complete baseball club and see if it can conquer all 162 games without a loss.',
   },
 };
+
+const football = new FootballGame();
 
 const ROUTES = ['home', 'draft', 'season', 'history', 'trophies', 'settings'];
 const TITLES = {
@@ -65,7 +70,7 @@ const STRETCHES = [[1, 20, null], [21, 41, 'rotationAudit'], [42, 61, 'identityC
 
 function mountAppSwitcher() {
   const items = Object.entries(GAME_CATALOG).map(([id, game]) => `
-    <button class="app-option${game.live ? ' active' : ''}" type="button" data-act="switch-game" data-game="${id}" aria-pressed="${String(!!game.live)}" style="--game-accent:${game.accent}">
+    <button class="app-option${id === app.selectedGame ? ' active' : ''}" type="button" data-act="switch-game" data-game="${id}" aria-pressed="${String(id === app.selectedGame)}" style="--game-accent:${game.accent}">
       <span class="app-option-mark" aria-hidden="true"><b>${game.record}</b><i>-0</i></span>
       <span class="app-option-copy"><b>${game.title}</b><small>${game.sport}</small></span>
       <span class="app-option-status ${game.live ? 'live' : ''}">${game.live ? 'Live' : 'Soon'}</span>
@@ -156,6 +161,7 @@ function hashRoute() {
 }
 
 function resolveRoute(r) {
+  if (app.selectedGame === '17-0') return football.resolveRoute(r);
   const p = app.session.phase;
   if (r === 'draft') {
     if (p === PHASES.simulating || p === PHASES.completed) return 'season';
@@ -202,6 +208,27 @@ function render(routeChanged = true) {
     document.title = `${selected.title} ${selected.sport} Game · Coming Soon`;
     const view = $('#view');
     view.innerHTML = viewGamePreview(selected);
+    if (routeChanged) {
+      view.classList.remove('view-enter');
+      void view.offsetWidth;
+      view.classList.add('view-enter');
+      window.scrollTo({ top: 0 });
+    }
+    view.focus({ preventScroll: true });
+    return;
+  }
+
+  if (selected.mode === 'football') {
+    runner.stop();
+    document.body.classList.toggle('in-flow', football.isFlowRoute(r));
+    document.body.dataset.route = r;
+    const tab = r === 'draft' || r === 'season' ? 'home' : r;
+    for (const a of $$('[data-tab]')) {
+      if (a.dataset.tab === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    }
+    document.title = football.title(r);
+    const view = $('#view');
+    view.innerHTML = football.render(r);
     if (routeChanged) {
       view.classList.remove('view-enter');
       void view.offsetWidth;
@@ -1048,6 +1075,14 @@ function viewSettings() {
 
 async function act(name, el) {
   const s = app.session;
+  if (app.selectedGame === '17-0' && name.startsWith('fb-')) {
+    const result = await football.handleAction(name, el);
+    if (!result) return;
+    if (result.route) go(result.route);
+    else if (result.render) render(false);
+    if (result.message) toast(result.message);
+    return;
+  }
   switch (name) {
     case 'switch-game': switchGame(el.dataset.game); break;
     case 'toggle-sidebar': {
@@ -1302,6 +1337,7 @@ function onKey(e) {
   }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+  if (app.selectedGame === '17-0') return;
   const onControl = ['BUTTON', 'A'].includes(e.target.tagName);
   const s = app.session;
 
