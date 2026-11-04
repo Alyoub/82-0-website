@@ -1239,8 +1239,8 @@ export function createFootball(host) {
   // ---------------------------------------------------------------------------
 
   return {
+    prefix: 'fb-',
     load,
-    get ready() { return !!session; },
     title: (r) => TITLES[r] || TITLES.home,
     resolveRoute(r) {
       if (!session) return r === 'draft' || r === 'season' ? 'home' : r;

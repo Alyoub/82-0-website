@@ -8,6 +8,7 @@
 import * as E from './engine.js';
 import { DraftSession, PHASES } from './session.js';
 import { createFootball, FB_APP_STORE_URL } from './football.js';
+import { createBaseball } from './baseball.js';
 import { Settings, IdentityConfig, History, achievements, APP_STORE_URL } from './store.js';
 import {
   esc, icon, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, ring,
@@ -40,22 +41,25 @@ const GAME_CATALOG = {
     record: '17',
     accent: '#19c98a',
     live: true,
-    mode: 'football',
     icon: new URL('../../assets/images/icon-17-0.jpg', import.meta.url).href,
     appStore: FB_APP_STORE_URL,
     description: 'Draft five football legends, make three coaching calls and chase a flawless 17-0 regular season.',
   },
   '162-0': {
     title: '162-0',
-    tag: 'BASEBALL CHALLENGE',
+    tag: 'BASEBALL DRAFT',
     sport: 'Baseball',
     record: '162',
-    accent: '#00d2ff',
-    description: 'Assemble a complete baseball club and see if it can conquer all 162 games without a loss.',
+    accent: '#e0a63f',
+    live: true,
+    icon: new URL('../../assets/images/icon-162-0.jpg', import.meta.url).href,
+    appStore: null,
+    description: 'Draft your starting nine across four eras, place them on the diamond and chase a perfect 162-0 season.',
   },
 };
 
-const football = createFootball({
+/** Games other than 82-0 run as self-contained modules sharing this shell. */
+const host = {
   go: (r) => go(r),
   render: (changed = false) => render(changed),
   toast: (msg) => toast(msg),
@@ -63,7 +67,9 @@ const football = createFootball({
   confirm: (opts) => confirmDialog(opts),
   route: () => app.route,
   get settings() { return app.settings; },
-});
+};
+const MODULES = { '17-0': createFootball(host), '162-0': createBaseball(host) };
+const gameModule = () => MODULES[app.selectedGame] || null;
 
 const ROUTES = ['home', 'draft', 'season', 'history', 'trophies', 'settings'];
 const TITLES = {
@@ -174,7 +180,7 @@ function hashRoute() {
 }
 
 function resolveRoute(r) {
-  if (app.selectedGame === '17-0') return football.resolveRoute(r);
+  if (gameModule()) return gameModule().resolveRoute(r);
   const p = app.session.phase;
   if (r === 'draft') {
     if (p === PHASES.simulating || p === PHASES.completed) return 'season';
@@ -211,11 +217,15 @@ function render(routeChanged = true) {
   const brandImg = $('.brand img');
   if (brandImg && selected.icon && brandImg.src !== selected.icon) brandImg.src = selected.icon;
   const pill = $('.app-pill');
-  if (pill && selected.appStore) {
-    pill.href = selected.appStore;
-    pill.setAttribute('aria-label', `Get ${selected.title} on the App Store`);
+  if (pill) {
+    pill.hidden = !selected.appStore;
+    if (selected.appStore) {
+      pill.href = selected.appStore;
+      pill.setAttribute('aria-label', `Get ${selected.title} on the App Store`);
+    }
   }
-  if (selected.mode !== 'football') football.stop();
+  const mod = gameModule();
+  for (const [id, m] of Object.entries(MODULES)) if (id !== app.selectedGame) m.stop();
   for (const item of $$('.app-option')) {
     const active = item.dataset.game === app.selectedGame;
     item.classList.toggle('active', active);
@@ -239,7 +249,7 @@ function render(routeChanged = true) {
     return;
   }
 
-  if (selected.mode === 'football') {
+  if (mod) {
     runner.stop();
     document.body.classList.toggle('in-flow', r === 'draft' || r === 'season');
     document.body.dataset.route = r;
@@ -247,9 +257,9 @@ function render(routeChanged = true) {
     for (const a of $$('[data-tab]')) {
       if (a.dataset.tab === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     }
-    document.title = football.title(r);
+    document.title = mod.title(r);
     const view = $('#view');
-    view.innerHTML = football.view(r);
+    view.innerHTML = mod.view(r);
     if (routeChanged) {
       view.classList.remove('view-enter');
       void view.offsetWidth;
@@ -257,7 +267,7 @@ function render(routeChanged = true) {
       window.scrollTo({ top: 0 });
     }
     view.focus({ preventScroll: true });
-    football.mounted(r);
+    mod.mounted(r);
     return;
   }
 
@@ -1077,8 +1087,9 @@ function viewSettings() {
 
 async function act(name, el) {
   const s = app.session;
-  if (app.selectedGame === '17-0' && name.startsWith('fb-')) {
-    await football.act(name, el);
+  const mod = gameModule();
+  if (mod && name.startsWith(mod.prefix)) {
+    await mod.act(name, el);
     return;
   }
   switch (name) {
@@ -1289,7 +1300,7 @@ function onKey(e) {
   }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-  if (app.selectedGame === '17-0') { football.onKey(e); return; }
+  if (gameModule()) { gameModule().onKey(e); return; }
   const onControl = ['BUTTON', 'A'].includes(e.target.tagName);
   const s = app.session;
 
@@ -1336,14 +1347,14 @@ async function loadData() {
   return { players, teams, eras, teamById: new Map(teams.map((t) => [t.id, t])) };
 }
 
-/** Returning 17-0 players (or ?game=17-0 links) get the 17-0 splash and accent before data loads. */
+/** Returning players of another game (or ?game= links) get that game's splash and accent before data loads. */
 function preselectGame() {
   let game = null;
   try { game = new URLSearchParams(location.search).get('game') || JSON.parse(localStorage.getItem('820.web.settings.v1') || '{}').game; } catch { /* storage blocked */ }
-  if (game !== '17-0') return;
-  document.body.dataset.game = '17-0';
+  if (!MODULES[game]) return;
+  document.body.dataset.game = game;
   const mark = $('.splash-mark');
-  if (mark) mark.innerHTML = '17<span>-</span>0';
+  if (mark) mark.innerHTML = `${GAME_CATALOG[game].record}<span>-</span>0`;
 }
 
 async function boot() {
@@ -1364,7 +1375,7 @@ async function boot() {
   app.session = new DraftSession(app.db);
   ensureRecorded();
 
-  // Last game played, or ?game=17-0 from a shared link.
+  // Last game played, or ?game=17-0 / ?game=162-0 from a shared link.
   const wanted = new URLSearchParams(location.search).get('game');
   if (wanted) {
     if (GAME_CATALOG[wanted]?.live) app.settings.set('game', wanted);
@@ -1374,8 +1385,8 @@ async function boot() {
   }
   const saved = app.settings.get('game');
   if (GAME_CATALOG[saved]?.live) app.selectedGame = saved;
-  if (app.selectedGame === '17-0') {
-    try { await football.load(); } catch (err) { console.error(err); }
+  if (gameModule()) {
+    try { await gameModule().load(); } catch (err) { console.error(err); }
   }
 
   window.addEventListener('hashchange', onRoute);
