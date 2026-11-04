@@ -18,7 +18,34 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const app = { db: null, session: null, history: null, settings: null, identity: null, route: null, historyFilter: 'all', fresh: null, busy: false, justLanded: false, autoSpin: false };
+const app = { db: null, session: null, history: null, settings: null, identity: null, route: null, selectedGame: '82-0', historyFilter: 'all', fresh: null, busy: false, justLanded: false, autoSpin: false };
+
+const GAME_CATALOG = {
+  '82-0': {
+    title: '82-0',
+    tag: 'BASKETBALL DRAFT',
+    sport: 'Basketball',
+    record: '82',
+    accent: '#ff6a1a',
+    live: true,
+  },
+  '17-0': {
+    title: '17-0',
+    tag: 'FOOTBALL CHALLENGE',
+    sport: 'Football',
+    record: '17',
+    accent: '#34d399',
+    description: 'Build a football roster, survive every matchup and chase a flawless 17-0 regular season.',
+  },
+  '162-0': {
+    title: '162-0',
+    tag: 'BASEBALL CHALLENGE',
+    sport: 'Baseball',
+    record: '162',
+    accent: '#00d2ff',
+    description: 'Assemble a complete baseball club and see if it can conquer all 162 games without a loss.',
+  },
+};
 
 const ROUTES = ['home', 'draft', 'season', 'history', 'trophies', 'settings'];
 const TITLES = {
@@ -35,6 +62,33 @@ const STRETCHES = [[1, 20, null], [21, 41, 'rotationAudit'], [42, 61, 'identityC
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+function mountAppSwitcher() {
+  const items = Object.entries(GAME_CATALOG).map(([id, game]) => `
+    <button class="app-option${game.live ? ' active' : ''}" type="button" data-act="switch-game" data-game="${id}" aria-pressed="${String(!!game.live)}" style="--game-accent:${game.accent}">
+      <span class="app-option-mark" aria-hidden="true"><b>${game.record}</b><i>-0</i></span>
+      <span class="app-option-copy"><b>${game.title}</b><small>${game.sport}</small></span>
+      <span class="app-option-status ${game.live ? 'live' : ''}">${game.live ? 'Live' : 'Soon'}</span>
+    </button>`).join('');
+
+  $('.ambient').insertAdjacentHTML('afterend', `
+    <button class="sidebar-backdrop" type="button" data-act="close-sidebar" aria-label="Close game library"></button>
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Game library">
+      <div class="app-sidebar-head">
+        <div class="studio-mark" aria-hidden="true">0</div>
+        <div><b>0 STUDIO</b><span>GAME LIBRARY</span></div>
+        <button class="sidebar-close" type="button" data-act="close-sidebar" aria-label="Close game library">${icon('x')}</button>
+      </div>
+      <p class="app-sidebar-label">SELECT A GAME</p>
+      <nav class="app-list" aria-label="Available games">${items}</nav>
+      <div class="app-sidebar-foot"><span class="status-dot"></span><span>More games on the way</span></div>
+    </aside>`);
+
+  $('.topbar').insertAdjacentHTML('afterbegin', `
+    <button class="sidebar-toggle" type="button" data-act="toggle-sidebar" aria-label="Open game library" aria-controls="app-sidebar" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>`);
+}
 
 const pname = (p) => E.playerName(p, app.identity.realNames);
 const tid = (team) => E.teamIdentity(team, app.identity.realNames);
@@ -130,6 +184,34 @@ function render(routeChanged = true) {
   if (r !== 'season') runner.stop();
   if (routeChanged) for (const d of $$('dialog[open]')) d.close();
 
+  const selected = GAME_CATALOG[app.selectedGame];
+  document.body.dataset.game = app.selectedGame;
+  $('.brand-name').textContent = selected.title;
+  $('.brand-tag').textContent = selected.tag;
+  $('.brand').setAttribute('aria-label', `${selected.title} ${selected.sport} game home`);
+  for (const item of $$('.app-option')) {
+    const active = item.dataset.game === app.selectedGame;
+    item.classList.toggle('active', active);
+    item.setAttribute('aria-pressed', String(active));
+  }
+
+  if (!selected.live) {
+    document.body.classList.remove('in-flow');
+    document.body.dataset.route = 'preview';
+    for (const a of $$('[data-tab]')) a.removeAttribute('aria-current');
+    document.title = `${selected.title} ${selected.sport} Game · Coming Soon`;
+    const view = $('#view');
+    view.innerHTML = viewGamePreview(selected);
+    if (routeChanged) {
+      view.classList.remove('view-enter');
+      void view.offsetWidth;
+      view.classList.add('view-enter');
+      window.scrollTo({ top: 0 });
+    }
+    view.focus({ preventScroll: true });
+    return;
+  }
+
   document.body.classList.toggle('in-flow', r === 'draft' || r === 'season');
   document.body.dataset.route = r;
   const tab = r === 'draft' || r === 'season' ? 'home' : r;
@@ -155,6 +237,32 @@ function render(routeChanged = true) {
     app.autoSpin = false;
     setTimeout(spin, 260);
   }
+}
+
+function viewGamePreview(game) {
+  return `
+  <section class="game-preview" style="--game-accent:${game.accent}" aria-labelledby="preview-title">
+    <div class="preview-glow" aria-hidden="true"></div>
+    <div class="preview-record" aria-hidden="true"><b>${game.record}</b><i>-</i><b>0</b></div>
+    <span class="preview-status"><i></i> Coming soon</span>
+    <h1 id="preview-title">${game.title}</h1>
+    <p>${game.description}</p>
+    <button class="btn btn-secondary" data-act="switch-game" data-game="82-0">Play 82-0 now</button>
+  </section>`;
+}
+
+function switchGame(id) {
+  if (!GAME_CATALOG[id] || id === app.selectedGame) {
+    document.body.classList.remove('sidebar-open');
+    $('.sidebar-toggle')?.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  app.selectedGame = id;
+  document.body.classList.remove('sidebar-open');
+  $('.sidebar-toggle')?.setAttribute('aria-expanded', 'false');
+  if (hashRoute() !== 'home') window.history.replaceState(null, '', '#/home');
+  app.route = 'home';
+  render(true);
 }
 
 // ---------------------------------------------------------------------------
@@ -941,6 +1049,16 @@ function viewSettings() {
 async function act(name, el) {
   const s = app.session;
   switch (name) {
+    case 'switch-game': switchGame(el.dataset.game); break;
+    case 'toggle-sidebar': {
+      const open = document.body.classList.toggle('sidebar-open');
+      $('.sidebar-toggle')?.setAttribute('aria-expanded', String(open));
+      break;
+    }
+    case 'close-sidebar':
+      document.body.classList.remove('sidebar-open');
+      $('.sidebar-toggle')?.setAttribute('aria-expanded', 'false');
+      break;
     case 'nav': go(el.dataset.to); break;
     case 'play': s.startDraft(); sound.tap(); go('draft'); break;
     case 'new-draft': {
@@ -1177,6 +1295,11 @@ function onClick(e) {
 }
 
 function onKey(e) {
+  if (e.key === 'Escape' && document.body.classList.contains('sidebar-open')) {
+    document.body.classList.remove('sidebar-open');
+    $('.sidebar-toggle')?.setAttribute('aria-expanded', 'false');
+    return;
+  }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
   const onControl = ['BUTTON', 'A'].includes(e.target.tagName);
@@ -1252,4 +1375,5 @@ async function boot() {
   app.identity.refresh().then((changed) => { if (changed && !$('dialog[open]')) render(false); });
 }
 
+mountAppSwitcher();
 boot();
