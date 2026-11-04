@@ -9,7 +9,7 @@ import * as E from './engine.js';
 import { DraftSession, PHASES } from './session.js';
 import { Settings, IdentityConfig, History, achievements, APP_STORE_URL } from './store.js';
 import {
-  esc, icon, APPLE_ICON, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, ring,
+  esc, icon, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, ring,
   ovrRing, miniBar, fitClass, fitLabel, signed, delta, court, strip,
 } from './ui.js';
 import { initFx, sound, haptic, canVibrate, confetti } from './fx.js';
@@ -221,19 +221,7 @@ function viewHome() {
         : '<div class="empty"><b>No seasons recorded yet</b>Start your first draft above to begin your journey.</div>'}
     </section>
   </div>
-  ${promoCard()}`;
-}
-
-function promoCard() {
-  return `<aside class="promo" aria-label="Get the iOS app">
-    <img class="promo-icon" src="../assets/images/icon-512.webp" alt="" width="64" height="64">
-    <div><h3>Take your dynasty on the go</h3><p>Same draft, same engine — plus Game Center leaderboards on iPhone and iPad.</p></div>
-    ${appBadge()}
-  </aside>`;
-}
-
-function appBadge() {
-  return `<a class="app-badge" href="${APP_STORE_URL}" target="_blank" rel="noopener noreferrer" aria-label="Download 82-0 on the App Store">${APPLE_ICON}<span><small>Download on the</small><b>App Store</b></span></a>`;
+  `;
 }
 
 function runRow(run) {
@@ -942,7 +930,6 @@ function viewSettings() {
       <a class="set-row" href="${APP_STORE_URL}" target="_blank" rel="noopener noreferrer"><div><b>Get 82-0 for iPhone &amp; iPad</b><span>Game Center leaderboards and achievements</span></div>${icon('external', 'chev')}</a>
       <a class="set-row" href="../support/"><div><b>Support</b><span>Questions, feedback and bug reports</span></div>${icon('arrow')}</a>
       <a class="set-row" href="../privacy/"><div><b>Privacy policy</b><span>The web edition stores your progress only in this browser</span></div>${icon('arrow')}</a>
-      <a class="set-row" href="../"><div><b>82-0 website</b><span>How it works, strategy and FAQ</span></div>${icon('arrow')}</a>
     </section>
   </div>`;
 }
@@ -1230,7 +1217,7 @@ function onKey(e) {
 
 async function loadData() {
   const get = async (n) => {
-    const r = await fetch(`data/${n}.json`);
+    const r = await fetch(new URL(`../data/${n}.json`, import.meta.url));
     if (!r.ok) throw new Error(`${n}.json: ${r.status}`);
     return r.json();
   };
