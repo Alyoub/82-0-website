@@ -20,6 +20,11 @@ import { QMARK_ITEM, BLANK_ITEM, reelCab, animateReel, neighbours } from './reel
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const phoneDownloadLayout = () => {
+  const mobileUA = navigator.userAgentData?.mobile === true || /Android|iPhone|iPod|Mobile/i.test(navigator.userAgent);
+  const touchAppleDevice = /Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1;
+  return mobileUA || touchAppleDevice || matchMedia('(max-width: 759px)').matches;
+};
 
 const app = { db: null, session: null, history: null, settings: null, identity: null, route: null, selectedGame: '82-0', historyFilter: 'all', fresh: null, busy: false, justLanded: false, autoSpin: false };
 
@@ -32,6 +37,7 @@ const GAME_CATALOG = {
     accent: '#ff6a1a',
     live: true,
     icon: new URL('../../assets/images/icon-82-0.jpg', import.meta.url).href,
+    qr: new URL('../../assets/images/qr/82-0-app-store.png', import.meta.url).href,
     appStore: APP_STORE_URL,
   },
   '17-0': {
@@ -42,6 +48,7 @@ const GAME_CATALOG = {
     accent: '#19c98a',
     live: true,
     icon: new URL('../../assets/images/icon-17-0.jpg', import.meta.url).href,
+    qr: new URL('../../assets/images/qr/17-0-app-store.png', import.meta.url).href,
     appStore: FB_APP_STORE_URL,
     description: 'Draft five football legends, make three coaching calls and chase a flawless 17-0 regular season.',
   },
@@ -53,6 +60,7 @@ const GAME_CATALOG = {
     accent: '#e0a63f',
     live: true,
     icon: new URL('../../assets/images/icon-162-0.jpg', import.meta.url).href,
+    qr: null,
     appStore: null,
     description: 'Draft your starting nine across four eras, place them on the diamond and chase a perfect 162-0 season.',
   },
@@ -145,6 +153,53 @@ function dialog(id, cls = 'sheet') {
   return d;
 }
 
+function syncAppDownload(selected = GAME_CATALOG[app.selectedGame]) {
+  const pill = $('.app-pill');
+  if (!pill) return;
+
+  pill.hidden = !selected?.appStore;
+  if (!selected?.appStore) return;
+
+  const direct = phoneDownloadLayout();
+  pill.href = selected.appStore;
+  pill.dataset.downloadMode = direct ? 'link' : 'qr';
+  pill.setAttribute('aria-label', direct
+    ? `Get ${selected.title} on the App Store`
+    : `Show a QR code to get ${selected.title} on your phone`);
+  pill.title = direct ? `Get ${selected.title} on the App Store` : `Scan a QR code to get ${selected.title}`;
+  const label = $('span', pill);
+  if (label) label.textContent = direct ? 'Get the app' : 'Scan to get app';
+}
+
+function openAppDownloadDialog() {
+  const selected = GAME_CATALOG[app.selectedGame];
+  if (!selected?.appStore || !selected?.qr) return;
+
+  const d = dialog('app-download-dialog', 'app-download-dialog');
+  d.setAttribute('aria-labelledby', 'app-download-title');
+  d.setAttribute('aria-describedby', 'app-download-description');
+  d.innerHTML = `
+    <div class="app-download-card" style="--game-accent:${selected.accent}">
+      <button class="icon-btn app-download-close" type="button" data-act="close-dialog" aria-label="Close QR code">${icon('x')}</button>
+      <div class="app-download-brand">
+        <img src="${esc(selected.icon)}" alt="" width="52" height="52">
+        <div><b>${esc(selected.title)}</b><span>${esc(selected.tag)}</span></div>
+      </div>
+      <span class="app-download-kicker">GET THE IOS APP</span>
+      <h2 id="app-download-title">Scan to get ${esc(selected.title)}</h2>
+      <p id="app-download-description">Open your phone camera and point it at the QR code. Tap the notification to open the App Store.</p>
+      <div class="app-qr-frame">
+        <img src="${esc(selected.qr)}" alt="QR code to download ${esc(selected.title)} from the App Store" width="512" height="512">
+      </div>
+      <a class="btn btn-secondary app-download-link" href="${esc(selected.appStore)}" target="_blank" rel="noopener noreferrer">
+        Open App Store link ${icon('external')}
+      </a>
+      <small>Available for iPhone and iPad</small>
+    </div>`;
+  d.onclick = (event) => { if (event.target === d) d.close(); };
+  d.showModal();
+}
+
 function confirmDialog({ title, body, confirm = 'Confirm', danger = false }) {
   return new Promise((resolve) => {
     const d = dialog('confirm-dialog');
@@ -216,14 +271,7 @@ function render(routeChanged = true) {
   $('.brand').setAttribute('aria-label', `${selected.title} ${selected.sport} game home`);
   const brandImg = $('.brand img');
   if (brandImg && selected.icon && brandImg.src !== selected.icon) brandImg.src = selected.icon;
-  const pill = $('.app-pill');
-  if (pill) {
-    pill.hidden = !selected.appStore;
-    if (selected.appStore) {
-      pill.href = selected.appStore;
-      pill.setAttribute('aria-label', `Get ${selected.title} on the App Store`);
-    }
-  }
+  syncAppDownload(selected);
   const mod = gameModule();
   for (const [id, m] of Object.entries(MODULES)) if (id !== app.selectedGame) m.stop();
   for (const item of $$('.app-option')) {
@@ -1285,6 +1333,16 @@ function togglePause() {
 }
 
 function onClick(e) {
+  const appPill = e.target.closest('.app-pill');
+  if (appPill) {
+    const modified = e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;
+    if (!phoneDownloadLayout() && !modified && GAME_CATALOG[app.selectedGame]?.qr) {
+      e.preventDefault();
+      openAppDownloadDialog();
+    }
+    return;
+  }
+
   const el = e.target.closest('[data-act]');
   if (!el || el.disabled) return;
   if (el.tagName === 'A' && el.getAttribute('href')) return;
@@ -1392,6 +1450,7 @@ async function boot() {
   window.addEventListener('hashchange', onRoute);
   document.addEventListener('click', onClick);
   document.addEventListener('keydown', onKey);
+  matchMedia('(max-width: 759px)').addEventListener?.('change', () => syncAppDownload());
   onRoute();
   requestAnimationFrame(() => splash.classList.add('hide'));
   setTimeout(() => splash.remove(), 700);
