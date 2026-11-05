@@ -1007,7 +1007,7 @@ export function createBaseball(host) {
   function shareText(run) {
     const tier = B.tierFor(run.wins);
     const months = B.MONTHS.map(([label], i) => `${label.slice(0, 3)} ${run.months[i][0]}-${run.months[i][1]}`);
-    const url = `${location.origin}${location.pathname}?game=162-0`;
+    const url = new URL('../../162-0/', import.meta.url).href;
     return `162-0 ⚾ ${run.wins}-${run.losses} · ${tier.label}\n${months.slice(0, 3).join(' · ')}\n${months.slice(3).join(' · ')}\n${B.pctText(run.wins, run.losses)} · ${signed(run.diff)} run diff · ${ord(run.rank)} of 30\nCan you go 162-0? ${url}`;
   }
 

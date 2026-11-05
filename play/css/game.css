@@ -214,7 +214,6 @@ a { color: inherit; text-decoration: none; }
 .tabbar a svg { width: 22px; height: 22px; }
 .tabbar a[aria-current='page'] { color: var(--orange); }
 body.in-flow .tabbar { display: none; }
-body[data-game]:not([data-game='82-0']) .seo-about { display: none !important; }
 .app-pill[hidden] { display: none !important; }
 
 /* Main view ---------------------------------------------------------------- */
@@ -974,6 +973,10 @@ a.set-row:hover b { color: var(--orange-2); }
 .seo-about h1 { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--text); margin-bottom: 8px; }
 .seo-about h3 { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--text); margin: 18px 0 8px; }
 .seo-about ol { padding-left: 1.3em; display: grid; gap: 6px; margin-bottom: 14px; }
+.seo-about h2 { font-family: var(--font-display); font-weight: 800; font-size: 19px; color: var(--text); margin: 24px 0 8px; }
+.seo-about ul { padding-left: 1.2em; display: grid; gap: 6px; margin-bottom: 14px; }
+.seo-about p { margin-bottom: 10px; }
+.seo-about .more-games { margin-top: 18px; }
 .seo-about strong { color: var(--text); }
 .seo-about a { color: var(--orange-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 body[data-route]:not([data-route="home"]) .seo-about { display: none; }

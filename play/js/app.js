@@ -37,6 +37,7 @@ const GAME_CATALOG = {
     accent: '#ff6a1a',
     live: true,
     icon: new URL('../../assets/images/icon-82-0.jpg', import.meta.url).href,
+    url: new URL('../../', import.meta.url).href,
     qr: new URL('../../assets/images/qr/82-0-app-store.png', import.meta.url).href,
     appStore: APP_STORE_URL,
   },
@@ -48,6 +49,7 @@ const GAME_CATALOG = {
     accent: '#19c98a',
     live: true,
     icon: new URL('../../assets/images/icon-17-0.jpg', import.meta.url).href,
+    url: new URL('../../17-0/', import.meta.url).href,
     qr: new URL('../../assets/images/qr/17-0-app-store.png', import.meta.url).href,
     appStore: FB_APP_STORE_URL,
     description: 'Draft five football legends, make three coaching calls and chase a flawless 17-0 regular season.',
@@ -60,11 +62,16 @@ const GAME_CATALOG = {
     accent: '#e0a63f',
     live: true,
     icon: new URL('../../assets/images/icon-162-0.jpg', import.meta.url).href,
+    url: new URL('../../162-0/', import.meta.url).href,
     qr: null,
     appStore: null,
     description: 'Draft your starting nine across four eras, place them on the diamond and chase a perfect 162-0 season.',
   },
 };
+
+/** The game this page is for: /17-0/ and /162-0/ set data-page-game; the homepage and /play/ are 82-0. */
+const PAGE_GAME = GAME_CATALOG[document.body.dataset.pageGame] ? document.body.dataset.pageGame : '82-0';
+app.selectedGame = PAGE_GAME;
 
 /** Games other than 82-0 run as self-contained modules sharing this shell. */
 const host = {
@@ -97,11 +104,11 @@ const STRETCHES = [[1, 20, null], [21, 41, 'rotationAudit'], [42, 61, 'identityC
 
 function mountAppSwitcher() {
   const items = Object.entries(GAME_CATALOG).map(([id, game]) => `
-    <button class="app-option${id === app.selectedGame ? ' active' : ''}" type="button" data-act="switch-game" data-game="${id}" aria-pressed="${String(id === app.selectedGame)}" style="--game-accent:${game.accent}">
+    <${id === app.selectedGame ? 'button type="button" data-act="close-sidebar" aria-current="page"' : `a href="${game.url}"`} class="app-option${id === app.selectedGame ? ' active' : ''}" data-game="${id}" style="--game-accent:${game.accent}">
       <span class="app-option-mark" aria-hidden="true"><img src="${game.icon}" alt="" width="46" height="46"></span>
       <span class="app-option-copy"><b>${game.title}</b><small>${game.sport}</small></span>
       <span class="app-option-status ${game.live ? 'live' : ''}">${game.live ? 'Live' : 'Soon'}</span>
-    </button>`).join('');
+    </${id === app.selectedGame ? 'button' : 'a'}>`).join('');
 
   $('.ambient').insertAdjacentHTML('afterend', `
     <button class="sidebar-backdrop" type="button" data-act="close-sidebar" aria-label="Close game library"></button>
@@ -364,13 +371,7 @@ function switchGame(id) {
     $('.sidebar-toggle')?.setAttribute('aria-expanded', 'false');
     return;
   }
-  app.selectedGame = id;
-  if (GAME_CATALOG[id].live) app.settings?.set('game', id);
-  document.body.classList.remove('sidebar-open');
-  $('.sidebar-toggle')?.setAttribute('aria-expanded', 'false');
-  if (hashRoute() !== 'home') window.history.replaceState(null, '', '#/home');
-  app.route = 'home';
-  render(true);
+  location.href = GAME_CATALOG[id].url;
 }
 
 // ---------------------------------------------------------------------------
@@ -1405,19 +1406,25 @@ async function loadData() {
   return { players, teams, eras, teamById: new Map(teams.map((t) => [t.id, t])) };
 }
 
-/** Returning players of another game (or ?game= links) get that game's splash and accent before data loads. */
+/** Old ?game= share links go to that game's own page; every page shows its own game. */
 function preselectGame() {
-  let game = null;
-  try { game = new URLSearchParams(location.search).get('game') || JSON.parse(localStorage.getItem('820.web.settings.v1') || '{}').game; } catch { /* storage blocked */ }
-  if (!MODULES[game]) return;
-  document.body.dataset.game = game;
-  const mark = $('.splash-mark');
-  if (mark) mark.innerHTML = `${GAME_CATALOG[game].record}<span>-</span>0`;
+  const wanted = new URLSearchParams(location.search).get('game');
+  if (wanted && wanted !== PAGE_GAME && GAME_CATALOG[wanted]?.live) {
+    location.replace(GAME_CATALOG[wanted].url + location.hash);
+    return false;
+  }
+  if (wanted) {
+    const url = new URL(location.href);
+    url.searchParams.delete('game');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }
+  document.body.dataset.game = PAGE_GAME;
+  return true;
 }
 
 async function boot() {
   const splash = $('#splash');
-  preselectGame();
+  if (!preselectGame()) return;
   try {
     app.db = await loadData();
   } catch (err) {
@@ -1433,16 +1440,6 @@ async function boot() {
   app.session = new DraftSession(app.db);
   ensureRecorded();
 
-  // Last game played, or ?game=17-0 / ?game=162-0 from a shared link.
-  const wanted = new URLSearchParams(location.search).get('game');
-  if (wanted) {
-    if (GAME_CATALOG[wanted]?.live) app.settings.set('game', wanted);
-    const url = new URL(location.href);
-    url.searchParams.delete('game');
-    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
-  }
-  const saved = app.settings.get('game');
-  if (GAME_CATALOG[saved]?.live) app.selectedGame = saved;
   if (gameModule()) {
     try { await gameModule().load(); } catch (err) { console.error(err); }
   }

@@ -1015,7 +1015,7 @@ export function createFootball(host) {
     const tier = F.tierFor(run.wins);
     const sq = (c) => (c === 'W' ? '🟩' : c === 'L' ? '🟥' : '🟨');
     const rows = F.STRETCHES.map(([a, z]) => run.grid.slice(a - 1, z).split('').map(sq).join('')).join(' ');
-    const url = `${location.origin}${location.pathname}?game=17-0`;
+    const url = new URL('../../17-0/', import.meta.url).href;
     return `17-0 🏈 ${rec(run)} · ${run.perfect ? 'PERFECT SEASON' : tier.label}\n${rows}\nTeam ${Math.round(run.teamRating)} · Chem ${Math.round(run.chemistry)} · ${run.ppg.toFixed(1)} PPG\nCan you go 17-0? ${url}`;
   }
 
