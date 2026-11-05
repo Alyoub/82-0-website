@@ -1095,9 +1095,10 @@ export function createBaseball(host) {
         <div class="set-row"><div><b>Delete season history</b><span>${history.runs.length} saved season${history.runs.length === 1 ? '' : 's'} on this device</span></div><button class="btn btn-secondary danger" data-act="bb-clear-history" ${history.runs.length ? '' : 'disabled'}>${icon('trash')} Delete</button></div>
       </section>
       <section class="set-group"><h2>ABOUT</h2>
+        <div class="set-row"><div><b>About 162-0</b><span>A free baseball draft game: spin a club and era, draft and place your starting nine and chase a perfect 162-0 season. Web edition by 0 Studio.</span></div></div>
         <div class="set-row"><div><b>162-0 for iPhone &amp; iPad</b><span>Coming soon to the App Store</span></div><span class="chip">SOON</span></div>
-        <a class="set-row" href="${new URL('../../support/', import.meta.url).href}"><div><b>Support</b><span>Questions, feedback and bug reports</span></div>${icon('arrow')}</a>
-        <a class="set-row" href="${new URL('../../privacy/', import.meta.url).href}"><div><b>Privacy policy</b><span>The web edition stores your progress only in this browser</span></div>${icon('arrow')}</a>
+        <a class="set-row" href="${new URL('../../162-0/support/', import.meta.url).href}"><div><b>Support</b><span>Questions, feedback and bug reports</span></div>${icon('arrow')}</a>
+        <a class="set-row" href="${new URL('../../162-0/privacy/', import.meta.url).href}"><div><b>Privacy policy</b><span>The web edition stores your progress only in this browser</span></div>${icon('arrow')}</a>
       </section>
       <p class="fine-print">All clubs, players and ratings in 162-0 are fictional. Eras are historical date ranges used to organize original gameplay content. Not affiliated with MLB or any team.</p>
     </div>`;

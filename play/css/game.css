@@ -950,6 +950,9 @@ a.set-row:hover b { color: var(--orange-2); }
 .switch[aria-checked='true']::after { transform: translateX(20px); }
 .danger { color: var(--loss) !important; }
 .set-row .btn { min-height: 38px; padding: 0 14px; font-size: 13px; }
+.set-row > svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--text-3); }
+a.set-row:hover > svg { color: var(--orange-2); }
+.set-row > .chip { flex-shrink: 0; }
 
 /* Run detail dialog */
 .detail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
