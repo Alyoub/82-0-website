@@ -71,6 +71,8 @@ const GAME_CATALOG = {
 
 /** The game this page is for: /17-0/ and /162-0/ set data-page-game; the homepage and /play/ are 82-0. */
 const PAGE_GAME = GAME_CATALOG[document.body.dataset.pageGame] ? document.body.dataset.pageGame : '82-0';
+/** The SEO title written in this page's HTML; the home screen keeps it so search engines see one consistent title. */
+const PAGE_TITLE = document.title;
 app.selectedGame = PAGE_GAME;
 
 /** Games other than 82-0 run as self-contained modules sharing this shell. */
@@ -312,7 +314,7 @@ function render(routeChanged = true) {
     for (const a of $$('[data-tab]')) {
       if (a.dataset.tab === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     }
-    document.title = mod.title(r);
+    document.title = r === 'home' && PAGE_TITLE ? PAGE_TITLE : mod.title(r);
     const view = $('#view');
     view.innerHTML = mod.view(r);
     if (routeChanged) {
@@ -332,7 +334,7 @@ function render(routeChanged = true) {
   for (const a of $$('[data-tab]')) {
     if (a.dataset.tab === tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   }
-  document.title = TITLES[r];
+  document.title = r === 'home' && PAGE_TITLE ? PAGE_TITLE : TITLES[r];
 
   const view = $('#view');
   const html = { home: viewHome, draft: viewDraft, season: viewSeason, history: viewHistory, trophies: viewTrophies, settings: viewSettings }[r]();
