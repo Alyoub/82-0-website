@@ -1118,13 +1118,14 @@ function viewSettings() {
       ${sw('fastSim', 'Fast simulation', 'Start every season in Fast mode instead of Watch mode')}
       ${sw('sound', 'Sound effects', 'Subtle cues for picks, coaching calls and the final buzzer')}
       ${canVibrate() ? sw('haptics', 'Vibration', 'Haptic ticks every ten games on supported phones') : ''}
-      <div class="set-row"><div><b>Player &amp; team names</b><span>${app.identity.realNames ? 'Real names' : 'Fictional identities'} — matches the 82-0 iOS app</span></div></div>
+      <div class="set-row"><div><b>Player &amp; team names</b><span>${app.identity.realNames ? 'Real player and team names' : 'Fictional identities'}</span></div></div>
     </section>
     <section class="set-group"><h2>DATA</h2>
       ${inProgress ? `<div class="set-row"><div><b>Abandon current run</b><span>Clears the draft or season in progress</span></div><button class="btn btn-secondary" data-act="abandon">Abandon</button></div>` : ''}
       <div class="set-row"><div><b>Delete season history</b><span>${app.history.runs.length} saved season${app.history.runs.length === 1 ? "" : "s"} on this device</span></div><button class="btn btn-secondary danger" data-act="clear-history" ${app.history.runs.length ? '' : 'disabled'}>${icon('trash')} Delete</button></div>
     </section>
     <section class="set-group"><h2>ABOUT</h2>
+      <div class="set-row"><div><b>Unofficial fan game</b><span>Not affiliated with, endorsed by or licensed by the NBA, its teams or its players. Names are used only to identify them, and ratings are our own opinions.</span></div></div>
       <a class="set-row" href="${APP_STORE_URL}" target="_blank" rel="noopener noreferrer"><div><b>Get 82-0 for iPhone &amp; iPad</b><span>Game Center leaderboards and achievements</span></div>${icon('external', 'chev')}</a>
       <a class="set-row" href="../support/"><div><b>Support</b><span>Questions, feedback and bug reports</span></div>${icon('arrow')}</a>
       <a class="set-row" href="../privacy/"><div><b>Privacy policy</b><span>The web edition stores your progress only in this browser</span></div>${icon('arrow')}</a>

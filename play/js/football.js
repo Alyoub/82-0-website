@@ -1096,7 +1096,7 @@ export function createFootball(host) {
         ${sw('fbFast', 'Fast simulation', 'Skip the quarter-by-quarter gamecast and show finals instantly')}
         ${sw('sound', 'Sound effects', 'Subtle cues for spins, picks, coaching calls and the final whistle')}
         ${canVibrate() ? sw('haptics', 'Vibration', 'Haptic taps for picks and results on supported phones') : ''}
-        <div class="set-row"><div><b>Player &amp; team names</b><span>${identity.realNames ? 'Real names' : 'Fictional identities'} — matches the 17-0 iOS app</span></div></div>
+        <div class="set-row"><div><b>Player &amp; team names</b><span>${identity.realNames ? 'Real player and team names' : 'Fictional identities'}</span></div></div>
       </section>
       <section class="set-group"><h2>DATA</h2>
         ${inProgress ? '<div class="set-row"><div><b>Abandon current run</b><span>Clears the draft or season in progress</span></div><button class="btn btn-secondary" data-act="fb-abandon">Abandon</button></div>' : ''}
@@ -1104,6 +1104,7 @@ export function createFootball(host) {
       </section>
       <section class="set-group"><h2>ABOUT</h2>
         <div class="set-row"><div><b>About 17-0</b><span>A free football draft game: spin a random franchise and era, build a 17-0 team from five key positions and try to go undefeated. Web edition by 0 Studio.</span></div></div>
+        <div class="set-row"><div><b>Unofficial fan game</b><span>Not affiliated with, endorsed by or licensed by the NFL, its teams or its players. Names are used only to identify them, and ratings are our own opinions.</span></div></div>
         <a class="set-row" href="${FB_APP_STORE_URL}" target="_blank" rel="noopener noreferrer"><div><b>Get 17-0 for iPhone &amp; iPad</b><span>Game modes, multiplayer and Game Center leaderboards</span></div>${icon('external', 'chev')}</a>
         <a class="set-row" href="${new URL('../../17-0/support/', import.meta.url).href}"><div><b>Support</b><span>Questions, feedback and bug reports</span></div>${icon('arrow')}</a>
         <a class="set-row" href="${new URL('../../17-0/privacy/', import.meta.url).href}"><div><b>Privacy policy</b><span>The web edition stores your progress only in this browser</span></div>${icon('arrow')}</a>

@@ -11,11 +11,12 @@ const CONFIG_KEY = 'remote-app-config-v1';
 const MAX_RUNS = 500;
 
 /**
- * Real vs. fictional player and team names.
- *   'remote' → follow the iOS app's live config (`realnames` flag), so web and app always match.
- *   true / false → force real or fictional names on the web regardless of the app.
+ * Real vs. fictional player and team names on the web.
+ *   true → always real names (the web games are unofficial fan games, like other draft games online).
+ *   'remote' → follow the iOS app's live config (`realnames` flag).
+ *   false → always fictional names.
  */
-export const WEB_REAL_NAMES = 'remote';
+export const WEB_REAL_NAMES = true;
 export const REMOTE_CONFIG_URL = 'https://alyoub.github.io/82V3-config.json';
 export const APP_STORE_URL = 'https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298';
 
