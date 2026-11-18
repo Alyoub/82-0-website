@@ -982,6 +982,12 @@ a.set-row:hover > svg { color: var(--orange-2); }
 .seo-about .more-games { margin-top: 18px; }
 .seo-about strong { color: var(--text); }
 .seo-about a { color: var(--orange-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.seo-foot { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13.5px; line-height: 1.6; }
+.seo-foot-links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; }
+.seo-about .seo-foot-links a { text-decoration: none; }
+.seo-about .seo-foot-links a:hover { text-decoration: underline; }
+.seo-foot p { margin-bottom: 4px; color: var(--text-3); }
+.seo-about .seo-foot p a { font-weight: 500; }
 body[data-route]:not([data-route="home"]) .seo-about { display: none; }
 body[data-route="home"] #view { padding-bottom: 28px; }
 @media (min-width: 760px) { .seo-about { padding: 8px 24px 56px; } }

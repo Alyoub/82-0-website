@@ -5,32 +5,36 @@
        Left out on purpose: /play/ (a copy of the home page, its canonical points to /) and /404.html (error page). -->
 
   <!-- Games -->
-  <url><loc>https://82-0.studio/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/17-0/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/162-0/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://82-0.studio/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/17-0/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/162-0/</loc><lastmod>2026-11-18</lastmod></url>
 
   <!-- Guides -->
-  <url><loc>https://82-0.studio/82-0-strategy/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/17-0-strategy/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/162-0-strategy/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/perfect-season-odds/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/games-like-82-0/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://82-0.studio/82-0-strategy/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/17-0-strategy/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/162-0-strategy/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/perfect-season-odds/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/games-like-82-0/</loc><lastmod>2026-11-18</lastmod></url>
 
   <!-- Best teams -->
-  <url><loc>https://82-0.studio/best-82-0-team/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/best-82-0-team/lakers/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/best-82-0-team/celtics/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/best-82-0-team/heat/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/best-82-0-team/bulls/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/best-82-0-team/warriors/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/best-17-0-team/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/best-162-0-team/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://82-0.studio/best-82-0-team/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/best-82-0-team/lakers/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/best-82-0-team/celtics/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/best-82-0-team/heat/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/best-82-0-team/bulls/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/best-82-0-team/warriors/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/best-17-0-team/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/best-162-0-team/</loc><lastmod>2026-11-18</lastmod></url>
+
+  <!-- About, legal and contact -->
+  <url><loc>https://82-0.studio/about/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/terms/</loc><lastmod>2026-11-18</lastmod></url>
 
   <!-- Privacy and support -->
-  <url><loc>https://82-0.studio/privacy/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/support/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/17-0/privacy/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/17-0/support/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/162-0/privacy/</loc><lastmod>2026-11-09</lastmod></url>
-  <url><loc>https://82-0.studio/162-0/support/</loc><lastmod>2026-11-09</lastmod></url>
+  <url><loc>https://82-0.studio/privacy/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/support/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/17-0/privacy/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/17-0/support/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/162-0/privacy/</loc><lastmod>2026-11-18</lastmod></url>
+  <url><loc>https://82-0.studio/162-0/support/</loc><lastmod>2026-11-18</lastmod></url>
 </urlset>

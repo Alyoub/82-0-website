@@ -1,0 +1,4 @@
+# Local audit notes: GitHub Pages publishes from main:/, so keep these out of git.
+/wash.md
+/klima.md
+/ADSENSE_FIX_REPORT.md

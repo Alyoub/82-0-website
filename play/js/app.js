@@ -9,7 +9,7 @@ import * as E from './engine.js';
 import { DraftSession, PHASES } from './session.js';
 import { createFootball, FB_APP_STORE_URL } from './football.js';
 import { createBaseball } from './baseball.js';
-import { Settings, IdentityConfig, History, achievements, APP_STORE_URL } from './store.js';
+import { Settings, IdentityConfig, History, achievements } from './store.js';
 import {
   esc, icon, BALL_SVG, BOARD_LINES, avatar, posBadge, hex, teamBadge, ring,
   ovrRing, miniBar, fitClass, fitLabel, signed, delta, court, strip,
@@ -38,8 +38,8 @@ const GAME_CATALOG = {
     live: true,
     icon: new URL('../../assets/images/icon-82-0.jpg', import.meta.url).href,
     url: new URL('../../', import.meta.url).href,
-    qr: new URL('../../assets/images/qr/82-0-app-store.png', import.meta.url).href,
-    appStore: APP_STORE_URL,
+    qr: null,
+    appStore: null,
   },
   '17-0': {
     title: '17-0',
@@ -109,7 +109,7 @@ function mountAppSwitcher() {
     <${id === app.selectedGame ? 'button type="button" data-act="close-sidebar" aria-current="page"' : `a href="${game.url}"`} class="app-option${id === app.selectedGame ? ' active' : ''}" data-game="${id}" style="--game-accent:${game.accent}">
       <span class="app-option-mark" aria-hidden="true"><img src="${game.icon}" alt="" width="46" height="46"></span>
       <span class="app-option-copy"><b>${game.title}</b><small>${game.sport}</small></span>
-      <span class="app-option-status ${game.live ? 'live' : ''}">${game.live ? 'Live' : 'Soon'}</span>
+      <span class="app-option-status ${game.live ? 'live' : ''}">${game.live ? 'Live' : 'Unavailable'}</span>
     </${id === app.selectedGame ? 'button' : 'a'}>`).join('');
 
   $('.ambient').insertAdjacentHTML('afterend', `
@@ -117,12 +117,12 @@ function mountAppSwitcher() {
     <aside class="app-sidebar" id="app-sidebar" aria-label="Game library">
       <div class="app-sidebar-head">
         <div class="studio-mark" aria-hidden="true">0</div>
-        <div><b>0 STUDIO</b><span>GAME LIBRARY</span></div>
+        <div><b>82-0 STUDIO</b><span>GAME LIBRARY</span></div>
         <button class="sidebar-close" type="button" data-act="close-sidebar" aria-label="Close game library">${icon('x')}</button>
       </div>
       <p class="app-sidebar-label">SELECT A GAME</p>
       <nav class="app-list" aria-label="Available games">${items}</nav>
-      <div class="app-sidebar-foot"><span class="status-dot"></span><span>More games on the way</span></div>
+      <div class="app-sidebar-foot"><span class="status-dot"></span><span>Three browser games available</span></div>
     </aside>`);
 
   $('.topbar').insertAdjacentHTML('afterbegin', `
@@ -293,7 +293,7 @@ function render(routeChanged = true) {
     document.body.classList.remove('in-flow');
     document.body.dataset.route = 'preview';
     for (const a of $$('[data-tab]')) a.removeAttribute('aria-current');
-    document.title = `${selected.title} ${selected.sport} Game · Coming Soon`;
+    document.title = `${selected.title} ${selected.sport} Game · Preview`;
     const view = $('#view');
     view.innerHTML = viewGamePreview(selected);
     if (routeChanged) {
@@ -360,7 +360,7 @@ function viewGamePreview(game) {
   <section class="game-preview" style="--game-accent:${game.accent}" aria-labelledby="preview-title">
     <div class="preview-glow" aria-hidden="true"></div>
     <div class="preview-record" aria-hidden="true"><b>${game.record}</b><i>-</i><b>0</b></div>
-    <span class="preview-status"><i></i> Coming soon</span>
+    <span class="preview-status"><i></i> Preview unavailable</span>
     <h1 id="preview-title">${game.title}</h1>
     <p>${game.description}</p>
     <button class="btn btn-secondary" data-act="switch-game" data-game="82-0">Play 82-0 now</button>
@@ -1025,7 +1025,6 @@ function htmlFinal() {
       </div>
       <button class="btn btn-ghost" data-act="home-reset">${icon('home')} Back to home</button>
     </div>
-    <div class="final-promo">Chase 82-0 anywhere — <a href="${APP_STORE_URL}" target="_blank" rel="noopener noreferrer">get the iPhone &amp; iPad app</a></div>
   </div>`;
 }
 
@@ -1126,7 +1125,6 @@ function viewSettings() {
     </section>
     <section class="set-group"><h2>ABOUT</h2>
       <div class="set-row"><div><b>Unofficial fan game</b><span>Not affiliated with, endorsed by or licensed by the NBA, its teams or its players. Names are used only to identify them, and ratings are our own opinions.</span></div></div>
-      <a class="set-row" href="${APP_STORE_URL}" target="_blank" rel="noopener noreferrer"><div><b>Get 82-0 for iPhone &amp; iPad</b><span>Game Center leaderboards and achievements</span></div>${icon('external', 'chev')}</a>
       <a class="set-row" href="../support/"><div><b>Support</b><span>Questions, feedback and bug reports</span></div>${icon('arrow')}</a>
       <a class="set-row" href="../privacy/"><div><b>Privacy policy</b><span>The web edition stores your progress only in this browser</span></div>${icon('arrow')}</a>
     </section>

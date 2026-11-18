@@ -18,7 +18,8 @@ const MAX_RUNS = 500;
  */
 export const WEB_REAL_NAMES = true;
 export const REMOTE_CONFIG_URL = 'https://alyoub.github.io/82V3-config.json';
-export const APP_STORE_URL = 'https://apps.apple.com/us/app/82-0-basketball-draft/id6794307298';
+/** The 82-0 iOS app is no longer available. Kept as null only so a cached older app.js still loads. */
+export const APP_STORE_URL = null;
 
 function readJSON(storage, key, fallback) {
   try { const v = JSON.parse(storage?.getItem(key) || 'null'); return v ?? fallback; } catch { return fallback; }

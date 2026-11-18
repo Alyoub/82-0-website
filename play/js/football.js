@@ -1103,7 +1103,7 @@ export function createFootball(host) {
         <div class="set-row"><div><b>Delete season history</b><span>${history.runs.length} saved season${history.runs.length === 1 ? '' : 's'} on this device</span></div><button class="btn btn-secondary danger" data-act="fb-clear-history" ${history.runs.length ? '' : 'disabled'}>${icon('trash')} Delete</button></div>
       </section>
       <section class="set-group"><h2>ABOUT</h2>
-        <div class="set-row"><div><b>About 17-0</b><span>A free football draft game: spin a random franchise and era, build a 17-0 team from five key positions and try to go undefeated. Web edition by 0 Studio.</span></div></div>
+        <div class="set-row"><div><b>About 17-0</b><span>A free football draft game: spin a random franchise and era, build a 17-0 team from five key positions and try to go undefeated. Web edition by 82-0 Studio.</span></div></div>
         <div class="set-row"><div><b>Unofficial fan game</b><span>Not affiliated with, endorsed by or licensed by the NFL, its teams or its players. Names are used only to identify them, and ratings are our own opinions.</span></div></div>
         <a class="set-row" href="${FB_APP_STORE_URL}" target="_blank" rel="noopener noreferrer"><div><b>Get 17-0 for iPhone &amp; iPad</b><span>Game modes, multiplayer and Game Center leaderboards</span></div>${icon('external', 'chev')}</a>
         <a class="set-row" href="${new URL('../../17-0/support/', import.meta.url).href}"><div><b>Support</b><span>Questions, feedback and bug reports</span></div>${icon('arrow')}</a>
