@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Play Echofall Free – 3D Browser Space Exploration Game</title>
+  <meta name="description" content="Play Echofall free in your browser: pilot a 3D survey ship, scan three original planets, land on foot, collect resources and uncover a hidden cache.">
+  <meta name="author" content="82-0 Studio">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://82-0.studio/echofall/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://82-0.studio/echofall/">
+  <meta property="og:title" content="Play Echofall – A Free 3D Browser Space Exploration Game">
+  <meta property="og:description" content="Fly the Morrowfin, scan three original worlds, explore their surfaces and uncover a hidden cache in this short browser expedition.">
+  <meta property="og:image" content="https://82-0.studio/assets/images/icon-echofall.svg">
+  <meta property="og:site_name" content="82-0 Studio">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Play Echofall – Free 3D Space Exploration Game">
+  <meta name="twitter:description" content="A short original low-poly space expedition with flight, planetary landings and a hidden cache. Play free in your browser.">
+  <meta name="twitter:image" content="https://82-0.studio/assets/images/icon-echofall.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/images/icon-echofall.svg">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <meta name="theme-color" content="#050711">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520293609467248" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css?v=20261118b">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["VideoGame", "WebApplication"],
+    "name": "Echofall",
+    "url": "https://82-0.studio/echofall/",
+    "image": "https://82-0.studio/assets/images/icon-echofall.svg",
+    "description": "A free original 3D browser space exploration game about piloting a survey ship, scanning three planets, landing on foot, collecting resources and upgrading a field scanner.",
+    "genre": ["Exploration", "Adventure"],
+    "gamePlatform": "Web browser",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Any operating system with a modern web browser",
+    "browserRequirements": "JavaScript and WebGL support",
+    "isAccessibleForFree": true,
+    "inLanguage": "en",
+    "featureList": ["3D star-system flight", "Planet scanning", "On-foot surface exploration", "Resource collection", "Scanner upgrade", "Local progress saving"],
+    "playMode": "SinglePlayer",
+    "offers": { "@type": "Offer", "price": "0.00", "priceCurrency": "USD" },
+    "author": { "@type": "Organization", "name": "82-0 Studio", "url": "https://82-0.studio/about/" }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="game-canvas" aria-label="Echofall 3D game view"></canvas>
+  <div class="space-grain" aria-hidden="true"></div>
+  <div class="cockpit-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+  <header class="topbar">
+    <button class="library-button" id="library-button" type="button" aria-label="Open game library" aria-expanded="false" aria-controls="game-library">
+      <span aria-hidden="true">☰</span>
+    </button>
+    <a class="brand" href="./" aria-label="Echofall home">
+      <img src="../assets/images/icon-echofall.svg" width="38" height="38" alt="">
+      <span><b>ECHOFALL</b><small>VEYRA SYSTEM SURVEY</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="save-status" id="save-status"><i></i> LOCAL SAVE</span>
+      <button class="icon-button" id="sound-button" type="button" aria-label="Mute sound" title="Mute sound">◖</button>
+      <button class="settings-button" id="settings-button" type="button" aria-label="Open settings">Settings</button>
+      <button class="restart-button" id="restart-button" type="button">Restart</button>
+    </div>
+  </header>
+
+  <button class="drawer-backdrop" id="drawer-backdrop" type="button" aria-label="Close game library"></button>
+  <aside class="game-library" id="game-library" aria-hidden="true">
+    <div class="library-head">
+      <span class="studio-orbit" aria-hidden="true">0</span>
+      <div><b>82-0 STUDIO</b><small>GAME LIBRARY</small></div>
+      <button id="library-close" type="button" aria-label="Close game library">×</button>
+    </div>
+    <p>SELECT A GAME</p>
+    <nav aria-label="Game library">
+      <a href="../"><img src="../assets/images/icon-82-0.jpg" alt=""><span><b>82-0</b><small>Basketball draft</small></span><em>Live</em></a>
+      <a href="../17-0/"><img src="../assets/images/icon-17-0.jpg" alt=""><span><b>17-0</b><small>Football draft</small></span><em>Live</em></a>
+      <a href="../162-0/"><img src="../assets/images/icon-162-0.jpg" alt=""><span><b>162-0</b><small>Baseball draft</small></span><em>Live</em></a>
+      <button type="button" aria-current="page"><img src="../assets/images/icon-echofall.svg" alt=""><span><b>Echofall</b><small>Space survey</small></span><em>Playing</em></button>
+    </nav>
+    <section class="library-about" aria-labelledby="about-echofall-title">
+      <h2 id="about-echofall-title">A free browser space exploration game</h2>
+      <p><strong>Echofall</strong> is a short, original single-player 3D game. Pilot the Morrowfin through one star system, scan three distinct planets, choose a landing site and explore each low-poly surface on foot.</p>
+      <p>Collect lumen, return to your ship and install the Echo Scanner MK II. The upgrade reveals a hidden planetary cache, giving you a reason to launch, revisit a world and complete the expedition. No download or account is required, and progress is saved locally in this browser.</p>
+      <p class="library-about-links"><a href="how-to-play/">How to play &amp; FAQ</a> · <a href="privacy/">Echofall privacy</a><br><a href="../games-like-no-mans-sky/">Games like No Man's Sky: honest comparison</a><br><a href="../about/">About 82-0 Studio</a></p>
+    </section>
+    <div class="library-foot"><i></i> Four browser games available</div>
+  </aside>
+
+  <main class="hud" aria-label="Survey controls and mission status">
+    <section class="mission-card glass-panel" aria-labelledby="mission-title">
+      <div class="panel-kicker">EXPEDITION // EF-01</div>
+      <h2 id="mission-title">First light in Veyra</h2>
+      <ol id="mission-list">
+        <li data-step="scan"><span>01</span><div><b>Chart the system</b><small id="scan-progress">Scan 0 of 3 worlds</small></div></li>
+        <li data-step="collect"><span>02</span><div><b>Gather field samples</b><small id="collect-progress">Collect 0 of 6 lumen</small></div></li>
+        <li data-step="upgrade"><span>03</span><div><b>Refit the scanner</b><small>Return to the Morrowfin</small></div></li>
+        <li data-step="cache"><span>04</span><div><b>Follow the echo</b><small>Hidden signal locked</small></div></li>
+        <li data-step="return"><span>05</span><div><b>Seal the survey</b><small>Bring the cache home</small></div></li>
+      </ol>
+    </section>
+
+    <section class="telemetry glass-panel" aria-label="Ship telemetry">
+      <div class="telemetry-title"><span id="mode-label">ORBITAL FLIGHT</span><i id="proximity-light"></i></div>
+      <div class="telemetry-grid">
+        <div><small id="speed-label">VELOCITY</small><b id="speed-value">0.0 KM/S</b></div>
+        <div><small>CARGO</small><b id="resource-value">0 LUMEN</b></div>
+        <div><small>SCANNER</small><b id="scanner-value">MK I</b></div>
+        <div id="vital-tile"><small id="vital-label">HULL TEMP</small><b id="vital-value">20 °C</b></div>
+      </div>
+      <div class="target-readout">
+        <small id="target-kicker">NEAREST WORLD</small>
+        <b id="target-name">NO TARGET</b>
+        <span id="target-distance">—</span>
+        <p id="target-type">Unresolved body · scan to chart it</p>
+        <dl id="target-facts" hidden></dl>
+      </div>
+    </section>
+
+    <section class="controls-card glass-panel" aria-label="Keyboard controls">
+      <div><span><kbd>W</kbd><kbd>S</kbd></span><small>THRUST / WALK</small></div>
+      <div><span><kbd>A</kbd><kbd>D</kbd></span><small>TURN</small></div>
+      <div><span><kbd>⇧</kbd></span><small>BOOST / RUN</small></div>
+      <div><span><kbd>E</kbd></span><small>SCAN / USE</small></div>
+      <div><span><kbd>L</kbd></span><small>LAND</small></div>
+      <div><span><kbd class="wide">SPACE</kbd></span><small>JUMP</small></div>
+    </section>
+
+    <div class="waypoint" id="waypoint" hidden aria-hidden="true">
+      <svg viewBox="0 0 44 44"><circle class="wp-ring" cx="22" cy="22" r="19"/><circle class="wp-progress" id="waypoint-progress" cx="22" cy="22" r="19"/></svg>
+      <i class="wp-arrow" id="waypoint-arrow"></i>
+      <span><b id="waypoint-label">TARGET</b><small id="waypoint-distance">—</small></span>
+    </div>
+
+    <div class="action-zone" aria-live="polite">
+      <p id="action-prompt">Follow the marker to the first world.</p>
+      <div>
+        <button id="primary-action" type="button" disabled><span>E</span><b>SCAN</b></button>
+        <button id="land-action" type="button" disabled><span>L</span><b>LAND</b></button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <div class="transition" id="transition" aria-hidden="true"><span id="transition-label">DESCENT</span></div>
+
+  <section class="briefing overlay open" id="briefing" aria-labelledby="briefing-title">
+    <div class="briefing-card">
+      <div class="briefing-mark" aria-hidden="true"><span></span><i></i></div>
+      <p class="panel-kicker">FREE 3D BROWSER SPACE EXPLORATION</p>
+      <h1 id="briefing-title">Echofall</h1>
+      <p class="briefing-story">The star remembers what the maps forgot.</p>
+      <p>Pilot the survey skiff <strong>Morrowfin</strong> through the Veyra system. Chart its three worlds from orbit, land, gather glowing lumen samples on foot and refit your scanner to expose a signal buried below the surface. Watch your speed, the star's heat and your suit's oxygen.</p>
+      <div class="briefing-route" aria-label="Mission route">
+        <span>FLY</span><i></i><span>SCAN</span><i></i><span>LAND</span><i></i><span>RETURN</span>
+      </div>
+      <button class="main-button" id="begin-button" type="button">Begin survey <span>→</span></button>
+      <small id="resume-note">Progress saves automatically in this browser.</small>
+    </div>
+  </section>
+
+  <dialog class="ship-dialog" id="ship-dialog">
+    <div class="dialog-shell">
+      <div class="dialog-visual" aria-hidden="true"><span></span><i></i><b>MK</b></div>
+      <p class="panel-kicker">MORROWFIN // FIELD BAY</p>
+      <h2 id="dialog-title">Ship systems</h2>
+      <p id="dialog-copy"></p>
+      <div class="upgrade-spec" id="upgrade-spec">
+        <span><small>CURRENT</small><b>SCANNER MK I</b></span>
+        <i>→</i>
+        <span><small>REFIT</small><b>ECHO SCANNER</b></span>
+      </div>
+      <div class="dialog-actions">
+        <button class="main-button" id="upgrade-button" type="button">Install upgrade · 6 lumen</button>
+        <button class="secondary-button" id="launch-button" type="button">Return to orbit</button>
+        <button class="text-button" id="dialog-close" type="button">Keep exploring</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="ship-dialog settings-dialog" id="settings-dialog" aria-labelledby="settings-title">
+    <form class="dialog-shell" method="dialog">
+      <p class="panel-kicker">ECHOFALL // LOCAL OPTIONS</p>
+      <h2 id="settings-title">Settings</h2>
+      <p>These preferences and your expedition progress stay in this browser.</p>
+      <div class="settings-list">
+        <label class="settings-row" for="settings-sound">
+          <span><b>Sound effects</b><small>Synthesized ship, scanner and surface audio</small></span>
+          <input id="settings-sound" type="checkbox">
+        </label>
+        <label class="settings-row" for="settings-waypoints">
+          <span><b>Objective waypoints</b><small>Show the next world, sample or ship marker</small></span>
+          <input id="settings-waypoints" type="checkbox">
+        </label>
+        <label class="settings-row" for="settings-quality">
+          <span><b>Graphics quality</b><small>Performance lowers render resolution on demanding devices</small></span>
+          <select id="settings-quality">
+            <option value="auto">Balanced</option>
+            <option value="performance">Performance</option>
+          </select>
+        </label>
+      </div>
+      <nav class="settings-links" aria-label="Echofall help and policies">
+        <a href="how-to-play/">How to play &amp; FAQ</a>
+        <a href="privacy/">Privacy policy</a>
+      </nav>
+      <div class="dialog-actions settings-actions">
+        <button class="main-button" id="settings-close" type="submit">Done</button>
+        <button class="text-button danger-button" id="settings-reset" type="button">Delete save and restart</button>
+      </div>
+    </form>
+  </dialog>
+
+  <section class="completion overlay" id="completion" aria-labelledby="completion-title">
+    <div class="briefing-card completion-card">
+      <div class="cache-glyph" aria-hidden="true"><span></span><i></i></div>
+      <p class="panel-kicker">SURVEY COMPLETE</p>
+      <h2 id="completion-title">The echo has a shape.</h2>
+      <p>You recovered the Veilstone cache and sealed Veyra's first complete surface record. The Morrowfin is ready for another run.</p>
+      <div class="final-stats">
+        <span><small>WORLDS SCANNED</small><b id="final-scans">1</b></span>
+        <span><small>LUMEN GATHERED</small><b id="final-lumen">0</b></span>
+        <span><small>SCANNER</small><b>MK II</b></span>
+      </div>
+      <button class="main-button" id="again-button" type="button">Start a new expedition</button>
+      <a href="../games-like-82-0/">Explore the other 82-0 Studio games</a>
+    </div>
+  </section>
+
+  <div class="touch-controls" aria-label="Touch controls">
+    <div class="touch-pad">
+      <button data-hold="KeyW" type="button" aria-label="Move forward">▲</button>
+      <button data-hold="KeyA" type="button" aria-label="Turn or move left">◀</button>
+      <button data-hold="KeyS" type="button" aria-label="Move backward">▼</button>
+      <button data-hold="KeyD" type="button" aria-label="Turn or move right">▶</button>
+    </div>
+    <div class="touch-actions">
+      <button class="touch-boost" data-hold="ShiftLeft" type="button" aria-label="Boost">BOOST</button>
+      <button data-tap="interact" type="button">USE</button>
+      <button data-tap="secondary" type="button">LAND</button>
+    </div>
+  </div>
+
+  <noscript><div class="noscript">Echofall needs JavaScript and WebGL to run.</div></noscript>
+  <script type="module" src="game.js?v=20261118b"></script>
+</body>
+</html>

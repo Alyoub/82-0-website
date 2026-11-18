@@ -67,6 +67,19 @@ const GAME_CATALOG = {
     appStore: null,
     description: 'Draft your starting nine across four eras, place them on the diamond and chase a perfect 162-0 season.',
   },
+  echofall: {
+    title: 'Echofall',
+    tag: 'SPACE EXPLORATION',
+    sport: '3D space survey',
+    record: 'EF',
+    accent: '#8fd3e2',
+    live: true,
+    icon: new URL('../../assets/images/icon-echofall.svg', import.meta.url).href,
+    url: new URL('../../echofall/', import.meta.url).href,
+    qr: null,
+    appStore: null,
+    description: 'Pilot a survey ship, scan three original planets, explore on foot and upgrade your scanner to reveal a hidden cache.',
+  },
 };
 
 /** The game this page is for: /17-0/ and /162-0/ set data-page-game; the homepage and /play/ are 82-0. */
@@ -122,7 +135,7 @@ function mountAppSwitcher() {
       </div>
       <p class="app-sidebar-label">SELECT A GAME</p>
       <nav class="app-list" aria-label="Available games">${items}</nav>
-      <div class="app-sidebar-foot"><span class="status-dot"></span><span>Three browser games available</span></div>
+      <div class="app-sidebar-foot"><span class="status-dot"></span><span>Four browser games available</span></div>
     </aside>`);
 
   $('.topbar').insertAdjacentHTML('afterbegin', `
